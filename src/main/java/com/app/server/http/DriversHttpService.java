@@ -1,5 +1,7 @@
 package com.app.server.http;
 
+import com.app.server.http.exceptions.APPInternalServerException;
+import com.app.server.http.exceptions.APPNotFoundException;
 import com.app.server.http.utils.APPResponse;
 import com.app.server.http.utils.PATCH;
 import com.app.server.models.Driver;
@@ -48,8 +50,19 @@ public class DriversHttpService {
     @Path("{id}")
     @Produces({ MediaType.APPLICATION_JSON})
     public APPResponse getOne(@PathParam("id") String id) {
+        try {
+            Driver d = service.getOne(id);
+            if (d == null)
+                throw new APPNotFoundException(56,"Driver not found");
+            return new APPResponse();
+        }
+        catch(IllegalArgumentException e){
+            throw new APPNotFoundException(56,"Driver not found");
+        }
+        catch (Exception e) {
+            throw new APPInternalServerException(0,"Something happened. Come back later.");
+        }
 
-        return new APPResponse(service.getOne(id));
     }
 
     @POST
