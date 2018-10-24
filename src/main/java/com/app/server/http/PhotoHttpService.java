@@ -1,13 +1,10 @@
 package com.app.server.http;
 
-import com.app.server.http.exceptions.APPInternalServerException;
 import com.app.server.http.exceptions.APPNotFoundException;
 import com.app.server.http.utils.APPResponse;
 import com.app.server.http.utils.PATCH;
 import com.app.server.models.Photo;
 import com.app.server.services.PhotoService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;

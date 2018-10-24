@@ -35,7 +35,7 @@ public class PhotoService {
         simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
     }
 
-    public static PhotoService getInstance(){
+    public static PhotoService getInstance() {
         if (self == null)
             self = new PhotoService();
         return self;
@@ -55,15 +55,46 @@ public class PhotoService {
         return photoList;
     }
 
-    public Photo getOne(String id) {
-            BasicDBObject query = new BasicDBObject();
-            query.put("_id", new ObjectId(id));
+    // Get all photos of a given user
+    public ArrayList<Photo> getAllPhotosOf(String userId) {
+        ArrayList<Photo> photoList = new ArrayList<Photo>();
 
-            Document item = photoCollection.find(query).first();
-            if (item == null) {
-                return null;
-            }
-            return convertDocumentToPhoto(item);
+        BasicDBObject query = new BasicDBObject();
+        query.put("userId", userId);
+
+        FindIterable<Document> results = this.photoCollection.find(query);
+        if (results == null) {
+            return photoList;
+        }
+        for (Document item : results) {
+            Photo photo = convertDocumentToPhoto(item);
+            photoList.add(photo);
+        }
+        return photoList;
+    }
+
+    public Photo getOne(String id) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", new ObjectId(id));
+
+        Document item = photoCollection.find(query).first();
+        if (item == null) {
+            return null;
+        }
+        return convertDocumentToPhoto(item);
+    }
+
+    // Get one Photo of a given user
+    public Photo getOnePhotoOf(String userId, String id) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", new ObjectId(id));
+        query.put("userId", userId);
+
+        Document item = photoCollection.find(query).first();
+        if (item == null) {
+            return null;
+        }
+        return convertDocumentToPhoto(item);
     }
 
     public Photo create(Object request) {
@@ -74,10 +105,10 @@ public class PhotoService {
             Photo photo = convertJsonToPhoto(json);
             Document doc = convertPhotoToDocument(photo);
             photoCollection.insertOne(doc);
-            ObjectId id = (ObjectId)doc.get( "_id" );
+            ObjectId id = (ObjectId) doc.get("_id");
             photo.setId(id.toString());
             return photo;
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             System.out.println("Failed to create a document");
             return null;
         }
@@ -94,31 +125,28 @@ public class PhotoService {
 
             Document doc = new Document();
             if (json.has("url"))
-                doc.append("url",json.getString("url"));
+                doc.append("url", json.getString("url"));
             if (json.has("createDate"))
-                doc.append("createDate",json.getString("createDate"));
+                doc.append("createDate", json.getString("createDate"));
             if (json.has("editDate"))
-                doc.append("editDate",json.getString("editDate"));
+                doc.append("editDate", json.getString("editDate"));
             if (json.has("userId"))
-                doc.append("userId",json.getString("userId"));
+                doc.append("userId", json.getString("userId"));
 
             Document set = new Document("$set", doc);
-            photoCollection.updateOne(query,set);
+            photoCollection.updateOne(query, set);
             return request;
 
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             System.out.println("Failed to update a document");
             return null;
 
 
-        }
-        catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             System.out.println("Failed to create a document");
             return null;
         }
     }
-
-
 
 
     public Object delete(String id) {
@@ -149,7 +177,7 @@ public class PhotoService {
         return photo;
     }
 
-    private Document convertPhotoToDocument(Photo photo){
+    private Document convertPhotoToDocument(Photo photo) {
         Document doc = new Document("url", photo.getUrl())
                 .append("createDate", photo.getCreateDate())
                 .append("editDate", photo.getEditDate())
@@ -157,10 +185,10 @@ public class PhotoService {
         return doc;
     }
 
-    private Photo convertJsonToPhoto(JSONObject json){
+    private Photo convertJsonToPhoto(JSONObject json) {
         Photo photo = null;
         try {
-            photo = new Photo( json.getString("url"),
+            photo = new Photo(json.getString("url"),
                     simpleDateFormat.parse(json.getString("createDate")),
                     simpleDateFormat.parse(json.getString("editDate")),
                     json.getString("userId"));
@@ -171,7 +199,4 @@ public class PhotoService {
         return photo;
     }
 
-
-
-
-} // end of main()
+}
