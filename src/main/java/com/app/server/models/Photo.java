@@ -3,7 +3,7 @@ package com.app.server.models;
 import java.util.Date;
 
 public class Photo {
-    String id=null;
+    String id = null;
     String url;
     Date createDate;
     Date editDate;
