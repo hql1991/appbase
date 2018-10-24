@@ -134,8 +134,8 @@ public class PhotoService {
                 doc.append("userId", json.getString("userId"));
 
             Document set = new Document("$set", doc);
-            photoCollection.updateOne(query, set);
-            return request;
+            return photoCollection.updateOne(query, set);
+//            return request;
 
         } catch (JSONException e) {
             System.out.println("Failed to update a document");
@@ -153,9 +153,9 @@ public class PhotoService {
         BasicDBObject query = new BasicDBObject();
         query.put("_id", new ObjectId(id));
 
-        photoCollection.deleteOne(query);
+        return photoCollection.deleteOne(query);
 
-        return new JSONObject();
+//        return new JSONObject();
     }
 
 

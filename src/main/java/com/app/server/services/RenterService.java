@@ -113,8 +113,8 @@ public class RenterService {
                 doc.append("pref_cook", json.getString("pref_cook"));
 
             Document set = new Document("$set", doc);
-            renterCollection.updateOne(query, set);
-            return request;
+            return renterCollection.updateOne(query, set);
+//            return request;
 
         } catch (JSONException e) {
             System.out.println("Failed to update a document");
@@ -132,9 +132,9 @@ public class RenterService {
         BasicDBObject query = new BasicDBObject();
         query.put("_id", new ObjectId(id));
 
-        renterCollection.deleteOne(query);
+        return renterCollection.deleteOne(query);
 
-        return new JSONObject();
+//        return new JSONObject();
     }
 
 
