@@ -41,15 +41,16 @@ public class RenterHttpService {
     @Produces({MediaType.APPLICATION_JSON})
     public APPResponse getOne(@PathParam("id") String id) {
         try {
-            Renter d = service.getOne(id);
-            if (d == null)
+            Renter renter = service.getOne(id);
+            if (renter == null)
                 throw new APPNotFoundException(56, "Renter not found");
-            return new APPResponse();
+            return new APPResponse(renter);
         } catch (IllegalArgumentException e) {
             throw new APPNotFoundException(56, "Renter not found");
-        } catch (Exception e) {
-            throw new APPInternalServerException(0, "Something happened. Come back later.");
         }
+//        catch (Exception e) {
+//            throw new APPInternalServerException(0, "Something happened. Come back later.");
+//        }
 
     }
 

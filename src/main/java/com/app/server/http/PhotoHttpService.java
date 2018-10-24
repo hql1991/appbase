@@ -42,15 +42,16 @@ public class PhotoHttpService {
     @Produces({MediaType.APPLICATION_JSON})
     public APPResponse getOne(@PathParam("id") String id) {
         try {
-            Photo d = service.getOne(id);
-            if (d == null)
+            Photo photo = service.getOne(id);
+            if (photo == null)
                 throw new APPNotFoundException(56, "Photo not found");
-            return new APPResponse();
+            return new APPResponse(photo);
         } catch (IllegalArgumentException e) {
             throw new APPNotFoundException(56, "Photo not found");
-        } catch (Exception e) {
-            throw new APPInternalServerException(0, "Something happened. Come back later.");
         }
+//        catch (Exception e) {
+//            throw new APPInternalServerException(0, "Something happened. Come back later.");
+//        }
 
     }
 
