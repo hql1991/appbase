@@ -1,5 +1,6 @@
 package com.app.server.services;
 
+import com.app.server.http.exceptions.APPNotFoundException;
 import com.app.server.http.utils.APPResponse;
 import com.app.server.models.Driver;
 import com.app.server.util.MongoPool;
@@ -54,15 +55,14 @@ public class DriversService {
     }
 
     public Driver getOne(String id) {
+            BasicDBObject query = new BasicDBObject();
+            query.put("_id", new ObjectId(id));
 
-        BasicDBObject query = new BasicDBObject();
-        query.put("_id", new ObjectId(id));
-
-        Document item = driversCollection.find(query).first();
-        if (item == null) {
-            return  null;
-        }
-        return  convertDocumentToDriver(item);
+            Document item = driversCollection.find(query).first();
+            if (item == null) {
+                return null;
+            }
+            return convertDocumentToDriver(item);
     }
 
     public Driver create(Object request) {
