@@ -1,7 +1,7 @@
 package com.app.server.services;
 
-import com.app.server.models.HouseRecommendation;
 import com.app.server.util.MongoPool;
+import com.app.server.models.HouseRecommendation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -14,9 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +53,7 @@ public class HouseRecommendationService {
     }
 
     // Get all recommendations of a given user
-    public HouseRecommendation getAllHouseeRecommendationsOf(String renterId) {
+    public HouseRecommendation getAllHouseRecommendationsOf(String renterId) {
 //        ArrayList<HouseRecommendation> recommendationList = new ArrayList<HouseRecommendation>();
 
         BasicDBObject query = new BasicDBObject();

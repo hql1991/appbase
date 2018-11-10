@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
-@Path("renters/{renterId}/appointments")
+@Path("renters/{renterId}/rentals")
 public class RentalHttpService {
 
     private RentalService service;
