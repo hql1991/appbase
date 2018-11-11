@@ -1,0 +1,219 @@
+package com.app.server.services;
+
+import com.app.server.util.MongoPool;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.mongodb.BasicDBObject;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.app.server.models.Rental;
+
+import java.util.ArrayList;
+
+/**
+ * Services run as singletons
+ */
+
+public class RentalService {
+
+    private static RentalService self;
+    private ObjectWriter ow;
+    private MongoCollection<Document> rentalCollection = null;
+
+    private RentalService() {
+        this.rentalCollection = MongoPool.getInstance().getCollection("rentals");
+        ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+
+    }
+
+    public static RentalService getInstance() {
+        if (self == null)
+            self = new RentalService();
+        return self;
+    }
+
+    public ArrayList<Rental> getAll() {
+        ArrayList<Rental> rentalList = new ArrayList<Rental>();
+
+        FindIterable<Document> results = this.rentalCollection.find();
+        if (results == null) {
+            return rentalList;
+        }
+        for (Document item : results) {
+            Rental rental = convertDocumentToRental(item);
+            rentalList.add(rental);
+        }
+        return rentalList;
+    }
+
+    // Get all rentals of a given user, sent or received
+    public ArrayList<Rental> getAllRentalsOf(String userId) {
+        ArrayList<Rental> rentalList = new ArrayList<>();
+        rentalList = getAllRentalsOfRenter(userId);
+        rentalList.addAll(getAllRentalsOfOwner(userId));
+        return rentalList;
+    }
+
+    // Get all renter rentals of a given user
+    public ArrayList<Rental> getAllRentalsOfRenter(String userId) {
+        ArrayList<Rental> rentalList = new ArrayList<Rental>();
+
+        BasicDBObject query = new BasicDBObject();
+        query.put("renterid", userId);
+
+        FindIterable<Document> results = this.rentalCollection.find(query);
+        if (results == null) {
+            return rentalList;
+        }
+        for (Document item : results) {
+            Rental rental = convertDocumentToRental(item);
+            rentalList.add(rental);
+        }
+        return rentalList;
+    }
+
+    // Get all owner rentals of a given user
+    public ArrayList<Rental> getAllRentalsOfOwner(String userId) {
+        ArrayList<Rental> rentalList = new ArrayList<>();
+
+        BasicDBObject query = new BasicDBObject();
+        query.put("ownerid", userId);
+
+        FindIterable<Document> results = this.rentalCollection.find(query);
+        if (results == null) {
+            return rentalList;
+        }
+        for (Document item : results) {
+            Rental rental = convertDocumentToRental(item);
+            rentalList.add(rental);
+        }
+        return rentalList;
+    }
+
+    public Rental getOne(String id) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", new ObjectId(id));
+
+        Document item = rentalCollection.find(query).first();
+        if (item == null) {
+            return null;
+        }
+        return convertDocumentToRental(item);
+    }
+
+
+
+    public Rental create(Object request) {
+
+        try {
+            JSONObject json = null;
+            json = new JSONObject(ow.writeValueAsString(request));
+            Rental rental = convertJsonToRental(json);
+            Document doc = convertRentalToDocument(rental);
+            rentalCollection.insertOne(doc);
+            ObjectId id = (ObjectId) doc.get("_id");
+            rental.setId(id.toString());
+            return rental;
+        } catch (JsonProcessingException e) {
+            System.out.println("Failed to create a document");
+            return null;
+        }
+    }
+
+
+    public Object update(String id, Object request) {
+        try {
+            JSONObject json = null;
+            json = new JSONObject(ow.writeValueAsString(request));
+
+            BasicDBObject query = new BasicDBObject();
+            query.put("_id", new ObjectId(id));
+
+            Document doc = new Document();
+            if (json.has("renterid"))
+                doc.append("renterid", json.getString("renterid"));
+            if (json.has("ownerid"))
+                doc.append("ownerid", json.getString("ownerid"));
+            if (json.has("rentalsd"))
+                doc.append("rentalsd", json.getString("rentalsd"));
+            if (json.has("rentaled"))
+                doc.append("rentaled", json.getString("rentaled"));
+            if (json.has("timestamp"))
+                doc.append("timestamp", json.getString("timestamp"));
+
+            Document set = new Document("$set", doc);
+            return rentalCollection.updateOne(query, set);
+//            return request;
+
+        } catch (JSONException e) {
+            System.out.println("Failed to update a document");
+            return null;
+
+
+        } catch (JsonProcessingException e) {
+            System.out.println("Failed to create a document");
+            return null;
+        }
+    }
+
+
+    public Object delete(String id) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", new ObjectId(id));
+
+        return rentalCollection.deleteOne(query);
+
+//        return new JSONObject();
+    }
+
+
+    public Object deleteAll() {
+
+        rentalCollection.deleteMany(new BasicDBObject());
+
+        return new JSONObject();
+    }
+
+    private Rental convertDocumentToRental(Document item) {
+        Rental rental = new Rental(
+                item.getString("renterid"),
+                item.getString("ownerid"),
+                item.getString("rentalsd"),
+                item.getDate("rentaled").toString(),
+                item.getBoolean("timestamp").toString()
+        );
+        rental.setId(item.getObjectId("_id").toString());
+        return rental;
+    }
+
+    private Document convertRentalToDocument(Rental rental) {
+        Document doc = new Document("renterid", rental.getrenterid())
+                .append("ownerid", rental.getownerid())
+                .append("rentalsd", rental.getrentalsd())
+                .append("rentaled", rental.getrentaled())
+                .append("timestamp", rental.gettimestamp());
+        return doc;
+    }
+
+    private Rental convertJsonToRental(JSONObject json) {
+        Rental rental = null;
+        try {
+            rental = new Rental(json.getString("renterid"),
+                    json.getString("ownerid"),
+                    json.getString("rentalsd"),
+                    json.getString("rentaled"),
+                    json.getString("timestamp"));
+
+        } catch (Exception e) {
+            System.out.println("Failed to convert Json to appointment");
+            return null;
+        }
+        return rental;
+    }
+
+}
