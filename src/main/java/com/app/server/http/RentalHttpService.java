@@ -51,6 +51,7 @@ public class RentalHttpService {
     @Produces({MediaType.APPLICATION_JSON})
     public APPResponse getAllReceived(@PathParam("ownerId") String ownerId) {
 
+        System.out.println(ownerId);
         return new APPResponse(service.getAllRentalsOfOwner(ownerId));
     }
 

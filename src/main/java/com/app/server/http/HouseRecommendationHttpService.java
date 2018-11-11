@@ -11,7 +11,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("rec")
+@Path("rec/houses")
 public class HouseRecommendationHttpService {
     private HouseRecommendationService service;
 
@@ -26,14 +26,14 @@ public class HouseRecommendationHttpService {
     }
 
     @GET
-    @Path("renters")
+//    @Path("")
     @Produces({MediaType.APPLICATION_JSON})
     public APPResponse getAll() {
         return new APPResponse(service.getAll());
     }
 
     @GET
-    @Path("renters/{renterId}")
+    @Path("{renterId}")
     @Produces({MediaType.APPLICATION_JSON})
     public APPResponse getOne(@PathParam("renterId") String renterId) {
         try {
