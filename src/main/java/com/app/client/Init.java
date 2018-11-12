@@ -33,6 +33,7 @@ public class Init {
         houseRecommendationLists[1]=house_recolist1;
         HouseRecInit.init(renterIds, houseRecommendationLists);
 
+        AppointmentInit.init(renterIds,ownerIds);
     }
 
 
