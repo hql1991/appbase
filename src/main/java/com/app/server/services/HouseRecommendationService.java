@@ -159,13 +159,9 @@ public class HouseRecommendationService {
 
     private Document convertHouseRecommendationToDocument(HouseRecommendation recommendation) {
         List<BasicDBObject> recolist = new ArrayList<>();
-        for (String reco :
-                recommendation.getHouse_recolist()) {
-            recolist.add(new BasicDBObject("houseId", reco));
-        }
 
         Document doc = new Document("renterId", recommendation.getrenterId())
-                .append("house_recolist", recolist);
+                .append("house_recolist", recommendation.getHouse_recolist());
         return doc;
     }
 

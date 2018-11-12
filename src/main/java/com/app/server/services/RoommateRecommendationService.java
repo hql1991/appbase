@@ -177,13 +177,9 @@ public class RoommateRecommendationService {
 
     private Document convertRoommateRecommendationToDocument(RoommateRecommendation recommendation) {
         List<BasicDBObject> recolist = new ArrayList<>();
-        for (String reco :
-                recommendation.getRoommate_recolist()) {
-            recolist.add(new BasicDBObject("roomId", reco));
-        }
 
         Document doc = new Document("renterId", recommendation.getRenterId())
-                .append("roommate_recolist", recolist);
+                .append("roommate_recolist", recommendation.getRoommate_recolist());
         return doc;
     }
 
@@ -191,11 +187,11 @@ public class RoommateRecommendationService {
         RoommateRecommendation recommendation = null;
         List<String> roommate_recolist = new ArrayList<>();
 //        try {
-            JSONArray recolist = json.getJSONArray("roommate_recolist");
-            for (Object o : recolist) {
-                roommate_recolist.add(o.toString());
-            }
-            recommendation = new RoommateRecommendation(json.getString("renterId"),roommate_recolist);
+        JSONArray recolist = json.getJSONArray("roommate_recolist");
+        for (Object o : recolist) {
+            roommate_recolist.add(o.toString());
+        }
+        recommendation = new RoommateRecommendation(json.getString("renterId"), roommate_recolist);
 //        } catch (ParseException e) {
 //            System.out.println("Failed to convert Json to recommendation");
 //            return null;
