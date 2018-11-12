@@ -2,8 +2,8 @@ package com.app.server.models;
 
 public class House {
 
-    public String getHouseid() {
-        return houseid;
+    public String getId() {
+        return id;
     }
 
     public String getOwnerid() {
@@ -28,7 +28,7 @@ public class House {
 
 
 
-    String houseid=null;
+    String id =null;
     String ownerid;
     String address;
     String state;
@@ -50,6 +50,6 @@ public class House {
 
     }
     public void setId(String houseid) {
-        this.houseid = houseid;
+        this.id = houseid;
     }
 }

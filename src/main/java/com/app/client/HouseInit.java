@@ -1,65 +1,38 @@
 package com.app.client;
 
+import com.app.server.services.HouseService;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class HouseInit {
+    private static HouseService houseService = HouseService.getInstance();
 
-    public static void init(String[] argv) {
+    public static String[] init(String[] argv) {
         doDeleteAll("5bdf54785861e26d0cf9e3cc");
-        doPost(argv[0], "70 Julia Cr", "CA","94043", "1990");
-        doPost(argv[1], "1122 Lakeside Drive", "CA","94555", "2010");
-        doPost(argv[2], "8 Mary Street", "CA","95035", "2000");
-        doPost(argv[3], "123 Sky Way", "CA","94070", "2009");
+        String[] ids = new String[4];
+        ids[0] = doPost(argv[0], "70 Julia Cr", "CA", "94043", "1990");
+        ids[1] = doPost(argv[1], "1122 Lakeside Drive", "CA", "94555", "2010");
+        ids[2] = doPost(argv[2], "8 Mary Street", "CA", "95035", "2000");
+        ids[3] = doPost(argv[3], "123 Sky Way", "CA", "94070", "2009");
         doGetAll("5bdf54785861e26d0cf9e3cc");
+        return ids;
     }
 
-    public static void doPost(String ownerid, String address, String state, String zipcode, String year){
-        try {
-            URL url = new URL("http://localhost:8080/api/owners/" + ownerid + "/houses");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Accept", "application/json");
-            con.setDoInput(true);
-
-            con.setDoOutput(true);
-
-            JSONObject house = new JSONObject();
-            house.put("ownerid",ownerid);
-            house.put("address",address);
-            house.put("state",state);
-            house.put("zipcode",zipcode);
-            house.put("year",year);
-
-            OutputStreamWriter wr= new OutputStreamWriter(con.getOutputStream());
-            wr.write(house.toString());
-            wr.flush();
+    public static String doPost(String ownerid, String address, String state, String zipcode, String year) {
 
 
-            int status = con.getResponseCode();
-            System.out.println(status);
+        JSONObject house = new JSONObject();
+        house.put("ownerid", ownerid);
+        house.put("address", address);
+        house.put("state", state);
+        house.put("zipcode", zipcode);
+        house.put("year", year);
 
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer content = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
-            }
-            in.close();
-            System.out.println(content);
-            con.disconnect();
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-
-        }
+        return houseService.create(house.toMap()).getId();
 
     }
 
