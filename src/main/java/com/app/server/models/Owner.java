@@ -2,8 +2,8 @@ package com.app.server.models;
 
 public class Owner {
 
-    public String getOwnerid() {
-        return ownerid;
+    public String getId() {
+        return id;
     }
 
     public String getUserName() {
@@ -32,7 +32,7 @@ public class Owner {
     public String getPrefCook() { return prefCook; }
 
 
-    String ownerid=null;
+    String id =null;
     String userName;
     String firstName;
     String lastName;
@@ -60,6 +60,6 @@ public class Owner {
 
     }
     public void setId(String ownerid) {
-        this.ownerid = ownerid;
+        this.id = ownerid;
     }
 }

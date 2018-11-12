@@ -10,12 +10,12 @@ import java.net.URL;
 
 public class Subresource {
 
-    public static void main(String[] argv) {
+    public static void init(String[] argv) {
         doDeleteAll("5bdf54785861e26d0cf9e3cc");
-        doPost("5bdf54785861e26d0cf9e3cc", "70 Julia Cr", "CA","94043", "1990");
-        doPost("5bdf54785861e26d0cf9e3cc", "1122 Lakeside Drive", "CA","94555", "2010");
-        doPost("5bdf54785861e26d0cf9e3cc", "8 Mary Street", "CA","95035", "2000");
-        doPost("5bdf54785861e26d0cf9e3cc", "123 Sky Way", "CA","94070", "2009");
+        doPost(argv[0], "70 Julia Cr", "CA","94043", "1990");
+        doPost(argv[1], "1122 Lakeside Drive", "CA","94555", "2010");
+        doPost(argv[2], "8 Mary Street", "CA","95035", "2000");
+        doPost(argv[3], "123 Sky Way", "CA","94070", "2009");
         doGetAll("5bdf54785861e26d0cf9e3cc");
     }
 

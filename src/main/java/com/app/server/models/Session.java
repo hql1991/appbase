@@ -11,8 +11,8 @@ public class Session {
     String lastName = null;
 
     public Session(Owner owner) throws Exception{
-        this.userId = owner.ownerid;
-        this.token = APPCrypt.encrypt(owner.ownerid);
+        this.userId = owner.id;
+        this.token = APPCrypt.encrypt(owner.id);
         this.firstName = owner.firstName;
         this.lastName = owner.lastName;
     }
