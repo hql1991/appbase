@@ -8,7 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Subresource {
+public class HouseInit {
 
     public static void init(String[] argv) {
         doDeleteAll("5bdf54785861e26d0cf9e3cc");

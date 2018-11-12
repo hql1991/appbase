@@ -5,12 +5,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class Resource {
+public class OwnerInit {
     private static OwnersService ownersService = OwnersService.getInstance();
 
     public static void main(String[] argv) {
@@ -20,7 +19,7 @@ public class Resource {
         ids[1] = doPost("Pineapple", "Lisa", "Cooper", "Female", "Employed", 2, "Cook");
         ids[2] = doPost("TJTJ", "Tom", "Green", "Male", "Employed", 1, "Cook");
         ids[3] = ids[2];
-        Subresource.init(ids);
+        HouseInit.init(ids);
         doGetAll();
     }
 
