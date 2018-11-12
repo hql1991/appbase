@@ -175,8 +175,8 @@ public class RentalService {
                 item.getString("renterId"),
                 item.getString("ownerId"),
                 item.getString("startDate"),
-                item.getDate("endDate").toString(),
-                item.getBoolean("timeStamp").toString()
+                item.getString("endDate").toString(),
+                item.getString("timeStamp").toString()
         );
         rental.setId(item.getObjectId("_id").toString());
         return rental;

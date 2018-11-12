@@ -11,10 +11,11 @@ import java.net.URL;
 
 public class RentalInit {
 
-    public static void init(String[] argv) {
+    public static void init(String[] renterIds, String[] ownerIds) {
         doDeleteAll();
-        doPost("5bdf54785861e26d0cf9e3cc", "5bdf54785861e26d0cf9e3cd", "08202018","08192019", "08102018");
-        doPost("5bdf54785861e26d0cf9e3cc", "5bdf54785861e26d0cf9e3cd", "06102017","08102018", "06012017");
+        doPost(renterIds[0], ownerIds[0], "08202018","08192019", "08102018");
+        doPost(renterIds[1], ownerIds[1], "06102017","08102018", "06012017");
+        doPost(renterIds[2], ownerIds[2], "01102013","09102013", "01092013");
         doGetAll();
     }
 
@@ -57,7 +58,6 @@ public class RentalInit {
         }
         catch(Exception e) {
             e.printStackTrace();
-
         }
 
     }
@@ -83,7 +83,6 @@ public class RentalInit {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-
         }
     }
 
@@ -107,7 +106,6 @@ public class RentalInit {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-
         }
 
     }

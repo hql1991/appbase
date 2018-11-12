@@ -31,6 +31,13 @@ public class RentalHttpService {
     }
 
     @GET
+    @Produces({MediaType.APPLICATION_JSON})
+    public APPResponse getAll() {
+
+        return new APPResponse(service.getAll());
+    }
+
+    @GET
     @Path("renter/{renterId}")
     @Produces({MediaType.APPLICATION_JSON})
     public APPResponse getAllSent(@PathParam("renterId") String renterId) {

@@ -13,7 +13,7 @@ import java.net.URL;
 public class RenterInit {
     private static RenterService renterService = RenterService.getInstance();
 
-    public static void main(String[] argv) {
+    public static String[] init() {
         doDeleteAll();
 
         String[] ids = new String[3];
@@ -22,9 +22,9 @@ public class RenterInit {
         ids[1] = doPost("James", "Harden", "james.harden@rockets.nba.com", 1, 2, 1, 0, 0, 3, 1, 1);
         ids[2] = doPost("Yuki", "Wang", "yuki.wang@sv.cmu.edu", 0, 1, 2, 2, 2, 2, 2, 2);
 
-        PhotoInit.init(ids);
-
         doGetAll();
+
+        return ids;
     }
 
     public static String doPost(String firstName, String lastName, String email, int gender, int job,

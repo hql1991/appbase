@@ -12,15 +12,15 @@ import java.net.URL;
 public class OwnerInit {
     private static OwnersService ownersService = OwnersService.getInstance();
 
-    public static void main(String[] argv) {
+    public static String[] init() {
         doDeleteAll();
         String[] ids = new String[4];
         ids[0] = doPost("Jim123", "Jim", "Madison", "Male", "Student", 1, "No cook");
         ids[1] = doPost("Pineapple", "Lisa", "Cooper", "Female", "Employed", 2, "Cook");
         ids[2] = doPost("TJTJ", "Tom", "Green", "Male", "Employed", 1, "Cook");
         ids[3] = ids[2];
-        HouseInit.init(ids);
         doGetAll();
+        return ids;
     }
 
     public static String doPost(String userName, String firstName, String lastName, String prefGender, String prefJob, int prefNum, String prefCook) {
