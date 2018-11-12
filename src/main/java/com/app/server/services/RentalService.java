@@ -51,20 +51,12 @@ public class RentalService {
         return rentalList;
     }
 
-    // Get all rentals of a given user, sent or received
-    public ArrayList<Rental> getAllRentalsOf(String userId) {
-        ArrayList<Rental> rentalList = new ArrayList<>();
-        rentalList = getAllRentalsOfRenter(userId);
-        rentalList.addAll(getAllRentalsOfOwner(userId));
-        return rentalList;
-    }
-
     // Get all renter rentals of a given user
     public ArrayList<Rental> getAllRentalsOfRenter(String userId) {
         ArrayList<Rental> rentalList = new ArrayList<Rental>();
 
         BasicDBObject query = new BasicDBObject();
-        query.put("renterid", userId);
+        query.put("renterId", userId);
 
         FindIterable<Document> results = this.rentalCollection.find(query);
         if (results == null) {
@@ -78,11 +70,11 @@ public class RentalService {
     }
 
     // Get all owner rentals of a given user
-    public ArrayList<Rental> getAllRentalsOfOwner(String userId) {
+    public ArrayList<Rental> getAllRentalsOfOwner(String ownerId) {
         ArrayList<Rental> rentalList = new ArrayList<>();
 
         BasicDBObject query = new BasicDBObject();
-        query.put("ownerid", userId);
+        query.put("ownerId", ownerId);
 
         FindIterable<Document> results = this.rentalCollection.find(query);
         if (results == null) {
@@ -105,7 +97,6 @@ public class RentalService {
         }
         return convertDocumentToRental(item);
     }
-
 
 
     public Rental create(Object request) {
@@ -135,16 +126,16 @@ public class RentalService {
             query.put("_id", new ObjectId(id));
 
             Document doc = new Document();
-            if (json.has("renterid"))
-                doc.append("renterid", json.getString("renterid"));
-            if (json.has("ownerid"))
-                doc.append("ownerid", json.getString("ownerid"));
-            if (json.has("rentalsd"))
-                doc.append("rentalsd", json.getString("rentalsd"));
-            if (json.has("rentaled"))
-                doc.append("rentaled", json.getString("rentaled"));
-            if (json.has("timestamp"))
-                doc.append("timestamp", json.getString("timestamp"));
+            if (json.has("renterId"))
+                doc.append("renterId", json.getString("renterId"));
+            if (json.has("ownerId"))
+                doc.append("ownerId", json.getString("ownerId"));
+            if (json.has("startDate"))
+                doc.append("startDate", json.getString("startDate"));
+            if (json.has("endDate"))
+                doc.append("endDate", json.getString("endDate"));
+            if (json.has("timeStamp"))
+                doc.append("timeStamp", json.getString("timeStamp"));
 
             Document set = new Document("$set", doc);
             return rentalCollection.updateOne(query, set);
@@ -181,33 +172,33 @@ public class RentalService {
 
     private Rental convertDocumentToRental(Document item) {
         Rental rental = new Rental(
-                item.getString("renterid"),
-                item.getString("ownerid"),
-                item.getString("rentalsd"),
-                item.getDate("rentaled").toString(),
-                item.getBoolean("timestamp").toString()
+                item.getString("renterId"),
+                item.getString("ownerId"),
+                item.getString("startDate"),
+                item.getDate("endDate").toString(),
+                item.getBoolean("timeStamp").toString()
         );
         rental.setId(item.getObjectId("_id").toString());
         return rental;
     }
 
     private Document convertRentalToDocument(Rental rental) {
-        Document doc = new Document("renterid", rental.getrenterid())
-                .append("ownerid", rental.getownerid())
-                .append("rentalsd", rental.getrentalsd())
-                .append("rentaled", rental.getrentaled())
-                .append("timestamp", rental.gettimestamp());
+        Document doc = new Document("renterId", rental.getRenterId())
+                .append("ownerId", rental.getOwnerId())
+                .append("startDate", rental.getStartDate())
+                .append("endDate", rental.getEndDate())
+                .append("timeStamp", rental.getTimeStamp());
         return doc;
     }
 
     private Rental convertJsonToRental(JSONObject json) {
         Rental rental = null;
         try {
-            rental = new Rental(json.getString("renterid"),
-                    json.getString("ownerid"),
-                    json.getString("rentalsd"),
-                    json.getString("rentaled"),
-                    json.getString("timestamp"));
+            rental = new Rental(json.getString("renterId"),
+                    json.getString("ownerId"),
+                    json.getString("startDate"),
+                    json.getString("endDate"),
+                    json.getString("timeStamp"));
 
         } catch (Exception e) {
             System.out.println("Failed to convert Json to appointment");

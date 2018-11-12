@@ -1,48 +1,44 @@
 package com.app.server.models;
 
-import java.util.Date;
-
 public class Rental {
     String id = null;
 
-    String renterid;
-    String ownerid;
-    String rentalsd;
-    String rentaled;
-    String timestamp;
-
+    String renterId;
+    String ownerId;
+    String startDate;
+    String endDate;
+    String timeStamp;
 
     public String getId() {
         return id;
     }
 
-    public String getrenterid() {
-        return renterid;
+    public String getRenterId() {
+        return renterId;
     }
 
-    public String getownerid() {
-        return ownerid;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public String getrentalsd() {
-        return rentalsd;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public String getrentaled() {
-        return rentaled;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public String gettimestamp() {
-        return timestamp;
+    public String getTimeStamp() {
+        return timeStamp;
     }
 
-
-    public Rental(String renterid, String ownerid, String rentalsd, String rentaled, String timestamp) {
-        this.renterid = renterid;
-        this.ownerid = ownerid;
-        this.rentalsd = rentalsd;
-        this.rentaled= rentaled;
-        this.timestamp = timestamp;
+    public Rental(String renterId, String ownerId, String startDate, String endDate, String timeStamp) {
+        this.renterId = renterId;
+        this.ownerId = ownerId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.timeStamp = timeStamp;
     }
 
     public void setId(String id) {

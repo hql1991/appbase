@@ -9,16 +9,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class Rental {
+public class RentalInit {
 
-    public static void main(String[] argv) {
+    public static void init(String[] argv) {
         doDeleteAll();
         doPost("5bdf54785861e26d0cf9e3cc", "5bdf54785861e26d0cf9e3cd", "08202018","08192019", "08102018");
         doPost("5bdf54785861e26d0cf9e3cc", "5bdf54785861e26d0cf9e3cd", "06102017","08102018", "06012017");
         doGetAll();
     }
 
-    public static void doPost(String renterid, String ownerid, String rentalsd, String rentaled, String timestamp){
+    public static void doPost(String renterId, String ownerId, String startDate, String endDate, String timeStamp){
         try {
             URL url = new URL("http://localhost:8080/api/rentals");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -30,11 +30,11 @@ public class Rental {
             con.setDoOutput(true);
 
             JSONObject rental = new JSONObject();
-            rental.put("renterid",renterid);
-            rental.put("ownerid",ownerid);
-            rental.put("rentalsd",rentalsd);
-            rental.put("rentaled",rentaled);
-            rental.put("timestamp",timestamp);
+            rental.put("renterId",renterId);
+            rental.put("ownerId",ownerId);
+            rental.put("startDate",startDate);
+            rental.put("endDate",endDate);
+            rental.put("timeStamp",timeStamp);
 
             OutputStreamWriter wr= new OutputStreamWriter(con.getOutputStream());
             wr.write(rental.toString());

@@ -2,7 +2,6 @@ package com.app.server.http;
 
 import com.app.server.http.utils.APPResponse;
 import com.app.server.http.utils.PATCH;
-//import com.app.server.models.Rental;
 import com.app.server.services.RentalService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -13,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
-@Path("renters/{renterId}/rentals")
+@Path("rentals")
 public class RentalHttpService {
 
     private RentalService service;
@@ -32,14 +31,7 @@ public class RentalHttpService {
     }
 
     @GET
-    @Produces({MediaType.APPLICATION_JSON})
-    public APPResponse getAll(@PathParam("renterId") String renterId) {
-
-        return new APPResponse(service.getAllRentalsOf(renterId));
-    }
-
-    @GET
-    @Path("renters")
+    @Path("renter/{renterId}")
     @Produces({MediaType.APPLICATION_JSON})
     public APPResponse getAllSent(@PathParam("renterId") String renterId) {
 
@@ -47,7 +39,7 @@ public class RentalHttpService {
     }
 
     @GET
-    @Path("owners")
+    @Path("owner/{ownerId}")
     @Produces({MediaType.APPLICATION_JSON})
     public APPResponse getAllReceived(@PathParam("ownerId") String ownerId) {
 
