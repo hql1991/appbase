@@ -39,7 +39,7 @@ public class HouseInit {
 
     public static void doGetAll(String ownerid) {
         try {
-            URL url = new URL("http://localhost:8080/api/owners/" + ownerid + "/houses");
+            URL url = new URL("http://localhost:8080/api/houses");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             int status = con.getResponseCode();
@@ -63,7 +63,7 @@ public class HouseInit {
 
     public static void doDeleteAll(String ownerid) {
         try {
-            URL url = new URL("http://localhost:8080/api/owners/" + ownerid + "/houses");
+            URL url = new URL("http://localhost:8080/api/houses");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("DELETE");
             int status = con.getResponseCode();
