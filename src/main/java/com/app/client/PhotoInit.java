@@ -8,21 +8,19 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Subresource {
-
-    public static void main(String[] argv) {
-        doDeleteAll("5bdf54785861e26d0cf9e3cc");
-        doPost("5bdf54785861e26d0cf9e3cc", "70 Julia Cr", "CA","94043", "1990");
-        doPost("5bdf54785861e26d0cf9e3cc", "1122 Lakeside Drive", "CA","94555", "2010");
-        doPost("5bdf54785861e26d0cf9e3cc", "8 Mary Street", "CA","95035", "2000");
-        doPost("5bdf54785861e26d0cf9e3cc", "123 Sky Way", "CA","94070", "2009");
-        doGetAll("5bdf54785861e26d0cf9e3cc");
+public class PhotoInit {
+    public static void init(String[] argv) {
+        doDeleteAll();
+        doPost("/storage/photos/1.jpg", "28/04/1991", "28/04/1996", argv[0] );
+        doPost("/storage/photos/2.jpg", "13/09/2016", "04/10/2016", argv[1]);
+        doPost("/storage/photos/3.jpg", "09/10/2018", "09/11/2018", argv[2]);
+        doGetAll();
     }
 
-    public static void doPost(String ownerid, String address, String state, String zipcode, String year){
+    public static void doPost(String url, String createDate, String editDate, String userId) {
         try {
-            URL url = new URL("http://localhost:8080/api/owners/" + ownerid + "/houses");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            URL dbURL = new URL("http://localhost:8080/api/photos");
+            HttpURLConnection con = (HttpURLConnection) dbURL.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/json");
@@ -30,15 +28,14 @@ public class Subresource {
 
             con.setDoOutput(true);
 
-            JSONObject house = new JSONObject();
-            house.put("ownerid",ownerid);
-            house.put("address",address);
-            house.put("state",state);
-            house.put("zipcode",zipcode);
-            house.put("year",year);
+            JSONObject driver = new JSONObject();
+            driver.put("url", url);
+            driver.put("createDate", createDate);
+            driver.put("editDate", editDate);
+            driver.put("userId", userId);
 
-            OutputStreamWriter wr= new OutputStreamWriter(con.getOutputStream());
-            wr.write(house.toString());
+            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+            wr.write(driver.toString());
             wr.flush();
 
 
@@ -55,8 +52,7 @@ public class Subresource {
             in.close();
             System.out.println(content);
             con.disconnect();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
@@ -64,9 +60,9 @@ public class Subresource {
     }
 
 
-    public static void doGetAll(String ownerid) {
+    public static void doGetAll() {
         try {
-            URL url = new URL("http://localhost:8080/api/owners/" + ownerid + "/houses");
+            URL url = new URL("http://localhost:8080/api/photos");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             int status = con.getResponseCode();
@@ -88,9 +84,9 @@ public class Subresource {
         }
     }
 
-    public static void doDeleteAll(String ownerid) {
+    public static void doDeleteAll() {
         try {
-            URL url = new URL("http://localhost:8080/api/owners/" + ownerid + "/houses");
+            URL url = new URL("http://localhost:8080/api/photos");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("DELETE");
             int status = con.getResponseCode();

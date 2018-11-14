@@ -1,5 +1,7 @@
 package com.app.client;
 
+import com.app.server.models.HouseRecommendation;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -7,21 +9,23 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class Resource {
+public class HouseRecInit {
 
-    public static void main(String[] argv) {
+    public static void init(String[] renterIds, List<String>[] houseIds) {
         doDeleteAll();
-        doPost("Jim123", "Jim", "Madison","Male", "Student", 1, "No cook");
-        doPost("Pineapple", "Lisa", "Cooper","Female", "Employed", 2, "Cook");
-        doPost("TJTJ", "Tom", "Green","Male", "Employed", 1, "Cook");
+        doPost(renterIds[0], houseIds[0]);
+        doPost(renterIds[1], houseIds[1]);
+
         doGetAll();
     }
 
-    public static void doPost(String userName, String firstName, String lastName, String prefGender, String prefJob, int prefNum, String prefCook){
+    public static void doPost(String renterId, List<String> house_recolist){
         try {
-            URL url = new URL("http://localhost:8080/api/owners");
+            URL url = new URL("http://localhost:8080/api/rec/houses");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
@@ -30,17 +34,12 @@ public class Resource {
 
             con.setDoOutput(true);
 
-            JSONObject owner = new JSONObject();
-            owner.put("userName",userName);
-            owner.put("firstName",firstName);
-            owner.put("lastName",lastName);
-            owner.put("prefGender",prefGender);
-            owner.put("prefJob",prefJob);
-            owner.put("prefNum",prefNum);
-            owner.put("prefCook",prefCook);
+            JSONObject houseRec = new JSONObject();
+            houseRec.put("renterId",renterId);
+            houseRec.put("house_recolist",house_recolist);
 
             OutputStreamWriter wr= new OutputStreamWriter(con.getOutputStream());
-            wr.write(owner.toString());
+            wr.write(houseRec.toString());
             wr.flush();
 
 
@@ -60,7 +59,6 @@ public class Resource {
         }
         catch(Exception e) {
             e.printStackTrace();
-
         }
 
     }
@@ -68,7 +66,7 @@ public class Resource {
 
     public static void doGetAll() {
         try {
-            URL url = new URL("http://localhost:8080/api/owners");
+            URL url = new URL("http://localhost:8080/api/rec/houses");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             int status = con.getResponseCode();
@@ -86,13 +84,12 @@ public class Resource {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-
         }
     }
 
     public static void doDeleteAll() {
         try {
-            URL url = new URL("http://localhost:8080/api/owners");
+            URL url = new URL("http://localhost:8080/api/rec/houses");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("DELETE");
             int status = con.getResponseCode();
@@ -110,10 +107,10 @@ public class Resource {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-
         }
 
     }
 
 
 }
+

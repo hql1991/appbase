@@ -3,8 +3,10 @@ package com.app.server.http;
 import com.app.server.http.exceptions.APPNotFoundException;
 import com.app.server.http.utils.APPResponse;
 import com.app.server.http.utils.PATCH;
+import com.app.server.models.Appointment;
 import com.app.server.models.Photo;
 import com.app.server.models.Renter;
+import com.app.server.services.AppointmentService;
 import com.app.server.services.PhotoService;
 import com.app.server.services.RenterService;
 import org.bson.types.ObjectId;
@@ -121,6 +123,91 @@ public class RenterHttpService {
             //        }
 
         }
+
+        @POST
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse create(Object request) {
+            return new APPResponse(service.create(request));
+        }
+
+        @PATCH
+        @Path("{id}")
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse update(@PathParam("id") String id, Object request) {
+
+            return new APPResponse(service.update(id, request));
+
+        }
+
+        @DELETE
+        @Path("{id}")
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse delete(@PathParam("id") String id) {
+
+            return new APPResponse(service.delete(id));
+        }
+
+        @DELETE
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse delete() {
+
+            return new APPResponse(service.deleteAll());
+        }
+
+    }
+
+    @Path("renters/{renterId}/appointments")
+    public static class AppointmentHttpService {
+        private AppointmentService service = AppointmentService.getInstance();
+
+        @OPTIONS
+        @PermitAll
+        public Response optionsById() {
+            return Response.ok().build();
+        }
+
+        @GET
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse getAll(@PathParam("renterId") String renterId) {
+
+            return new APPResponse(service.getAllAppointmentsOf(renterId));
+        }
+
+        @GET
+        @Path("sent")
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse getAllSent(@PathParam("renterId") String renterId) {
+
+            return new APPResponse(service.getAllSentAppointmentsOf(renterId));
+        }
+
+        @GET
+        @Path("received")
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse getAllReceived(@PathParam("renterId") String renterId) {
+
+            return new APPResponse(service.getAllReceivedAppointmentsOf(renterId));
+        }
+
+//        @GET
+//        @Path("{id}")
+//        @Produces({MediaType.APPLICATION_JSON})
+//        public APPResponse getOne(@PathParam("renterId") String renterId, @PathParam("id") String id) {
+//            try {
+//                Appointment appointment = service.getOneAppointmentOf(renterId, id);
+//                if (appointment == null)
+//                    throw new APPNotFoundException(56, "Appointment not found");
+//                return new APPResponse(appointment);
+//            } catch (IllegalArgumentException e) {
+//                throw new APPNotFoundException(56, "Appointment not found");
+//            }
+//            //        catch (Exception e) {
+//            //            throw new APPInternalServerException(0, "Something happened. Come back later.");
+//            //        }
+//
+//        }
 
         @POST
         @Consumes({MediaType.APPLICATION_JSON})

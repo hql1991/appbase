@@ -37,7 +37,7 @@ public class HouseService {
         return self;
     }
 
-    public ArrayList<House> getAll(String ownerid) {
+    public ArrayList<House> getAllHousesOf(String ownerid) {
 
         ArrayList<House> houseList = new ArrayList<House>();
 
@@ -45,6 +45,20 @@ public class HouseService {
         field.put("ownerid", ownerid);
 
         FindIterable<Document> results = this.houseCollection.find(field);
+        if (results == null) {
+            return houseList;
+        }
+        for (Document item : results) {
+            House house = convertDocumentToHouse(item);
+            houseList.add(house);
+        }
+        return houseList;
+    }
+    public ArrayList<House> getAll() {
+
+        ArrayList<House> houseList = new ArrayList<House>();
+
+        FindIterable<Document> results = this.houseCollection.find();
         if (results == null) {
             return houseList;
         }
@@ -133,7 +147,15 @@ public class HouseService {
     }
 
 
-    public Object deleteAll(String ownerid) {
+    public Object deleteAllHousesOf(String ownerid) {
+        BasicDBObject query=new BasicDBObject();
+        query.put("ownerId", ownerid);
+        houseCollection.deleteMany(query);
+
+        return new JSONObject();
+    }
+
+    public Object deleteAll() {
 
         houseCollection.deleteMany(new BasicDBObject());
 
