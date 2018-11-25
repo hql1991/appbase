@@ -1,5 +1,6 @@
 package com.app.server.services;
 
+import com.app.server.http.utils.APPCrypt;
 import com.app.server.models.Owner;
 
 import com.app.server.http.exceptions.APPNotFoundException;
@@ -75,6 +76,9 @@ public class OwnersService {
             return owner;
         } catch(JsonProcessingException e) {
             System.out.println("Failed to create a document");
+            return null;
+        } catch (Exception e) {
+            System.out.println("Failed to create a document" + e.getMessage());
             return null;
         }
     }
@@ -161,7 +165,7 @@ public class OwnersService {
         return owner;
     }
 
-    private Document convertOwnerToDocument(Owner owner){
+    private Document convertOwnerToDocument(Owner owner) throws Exception{
         Document doc = new Document("userName", owner.getUserName())
                 .append("firstName", owner.getFirstName())
                 .append("lastName", owner.getLastName())
@@ -170,7 +174,7 @@ public class OwnersService {
                 .append("prefNum", owner.getPrefNum())
                 .append("prefCook", owner.getPrefCook())
                 .append("emailAddress", owner.getEmailAddress())
-                .append("password", owner.getPassword());
+                .append("password", APPCrypt.encrypt(owner.getPassword()));
         return doc;
     }
 
