@@ -10,6 +10,7 @@ public class Session {
     String firstName = null;
     String lastName = null;
 
+
     public Session(Owner owner) throws Exception{
         this.userId = owner.id;
         this.token = APPCrypt.encrypt(owner.id);

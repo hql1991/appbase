@@ -86,7 +86,9 @@ public class SessionService {
                 item.getString("prefGender"),
                 item.getString("prefJob"),
                 item.getInteger("prefNum"),
-                item.getString("prefCook")
+                item.getString("prefCook"),
+                item.getString("emailAddress"),
+                item.getString("password")
                 );
         owner.setId(item.getObjectId("_id").toString());
         return owner;
