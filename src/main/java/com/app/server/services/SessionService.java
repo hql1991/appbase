@@ -13,6 +13,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.json.JSONObject;
+import com.app.server.http.utils.APPCrypt;
 
 /**
  * Services run as singletons
@@ -50,8 +51,8 @@ public class SessionService {
             BasicDBObject query = new BasicDBObject();
 
             query.put("emailAddress", json.getString("emailAddress"));
-//            query.put("password", APPCrypt.encrypt(json.getString("password")));
-            query.put("password", json.getString("password"));
+            query.put("password", APPCrypt.encrypt(json.getString("password")));
+            //query.put("password", json.getString("password"));
 
             Document item = ownersCollection.find(query).first();
             if (item == null) {
@@ -86,7 +87,9 @@ public class SessionService {
                 item.getString("prefGender"),
                 item.getString("prefJob"),
                 item.getInteger("prefNum"),
-                item.getString("prefCook")
+                item.getString("prefCook"),
+                item.getString("emailAddress"),
+                item.getString("password")
                 );
         owner.setId(item.getObjectId("_id").toString());
         return owner;

@@ -1,5 +1,6 @@
 package com.app.server.services;
 
+import com.app.server.http.utils.APPCrypt;
 import com.app.server.models.Owner;
 
 import com.app.server.http.exceptions.APPNotFoundException;
@@ -76,6 +77,9 @@ public class OwnersService {
         } catch(JsonProcessingException e) {
             System.out.println("Failed to create a document");
             return null;
+        } catch (Exception e) {
+            System.out.println("Failed to create a document" + e.getMessage());
+            return null;
         }
     }
 
@@ -103,6 +107,10 @@ public class OwnersService {
                 doc.append("prefNum",json.getInt("prefNum"));
             if (json.has("prefCook"))
                 doc.append("prefCook",json.getString("prefCook"));
+            if (json.has("emailAddress"))
+                doc.append("emailAddress",json.getString("emailAddress"));
+            if (json.has("password"))
+                doc.append("password",json.getString("password"));
 
             Document set = new Document("$set", doc);
             ownersCollection.updateOne(query,set);
@@ -148,20 +156,25 @@ public class OwnersService {
                 item.getString("prefGender"),
                 item.getString("prefJob"),
                 item.getInteger("prefNum"),
-                item.getString("prefCook")
+                item.getString("prefCook"),
+                item.getString("emailAddress"),
+                item.getString("password")
+
         );
         owner.setId(item.getObjectId("_id").toString());
         return owner;
     }
 
-    private Document convertOwnerToDocument(Owner owner){
+    private Document convertOwnerToDocument(Owner owner) throws Exception{
         Document doc = new Document("userName", owner.getUserName())
                 .append("firstName", owner.getFirstName())
                 .append("lastName", owner.getLastName())
                 .append("prefGender", owner.getPrefGender())
                 .append("prefJob", owner.getPrefJob())
                 .append("prefNum", owner.getPrefNum())
-                .append("prefCook", owner.getPrefCook());
+                .append("prefCook", owner.getPrefCook())
+                .append("emailAddress", owner.getEmailAddress())
+                .append("password", APPCrypt.encrypt(owner.getPassword()));
         return doc;
     }
 
@@ -173,7 +186,9 @@ public class OwnersService {
                 json.getString("prefGender"),
                 json.getString("prefJob"),
                 json.getInt("prefNum"),
-                json.getString("prefCook"));
+                json.getString("prefCook"),
+                json.getString("emailAddress"),
+                json.getString("password"));
         return owner;
     }
 
