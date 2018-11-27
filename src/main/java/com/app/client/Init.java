@@ -20,6 +20,7 @@ public class Init {
         PhotoInit.init(renterIds);
         String[] ownerIds = OwnerInit.init();
         String[] houseIds = HouseInit.init(ownerIds);
+        String[] transactionId = PaymentInit.init();
         RentalInit.init(renterIds, ownerIds);
 
         List<String> house_recolist0 = new ArrayList<>();
