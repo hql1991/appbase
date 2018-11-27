@@ -14,6 +14,7 @@ public class Renter {
     int pref_job;
     int pref_num;
     int pref_cook;
+    String password;
 
     public String getId() {
         return id;
@@ -63,7 +64,11 @@ public class Renter {
         return pref_cook;
     }
 
-    public Renter(String firstName, String lastName, String email, int gender, int job, int num, int cook, int pref_gender, int pref_job, int pref_num, int pref_cook) {
+    public String getPassword() {
+        return password;
+    }
+
+    public Renter(String firstName, String lastName, String email, int gender, int job, int num, int cook, int pref_gender, int pref_job, int pref_num, int pref_cook, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -75,6 +80,7 @@ public class Renter {
         this.pref_job = pref_job;
         this.pref_num = pref_num;
         this.pref_cook = pref_cook;
+        this.password = password;
     }
 
     public void setId(String id) {

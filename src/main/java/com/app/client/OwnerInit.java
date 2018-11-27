@@ -23,7 +23,7 @@ public class OwnerInit {
         return ids;
     }
 
-    public static String doPost(String userName, String firstName, String lastName, String prefGender, String prefJob, int prefNum, String prefCook, String emailAddress, String password) {
+    public static String doPost(String userName, String firstName, String lastName, String prefGender, String prefJob, int prefNum, String prefCook, String email, String password) {
 //        try {
 //            URL url = new URL("http://localhost:8080/api/owners");
 //            HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -74,7 +74,7 @@ public class OwnerInit {
         owner.put("prefJob", prefJob);
         owner.put("prefNum", prefNum);
         owner.put("prefCook", prefCook);
-        owner.put("emailAddress", emailAddress);
+        owner.put("email", email);
         owner.put("password", password);
 
         return ownersService.create(owner.toMap()).getId();

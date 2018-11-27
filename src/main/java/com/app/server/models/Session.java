@@ -17,4 +17,10 @@ public class Session {
         this.firstName = owner.firstName;
         this.lastName = owner.lastName;
     }
+    public Session(Renter renter) throws Exception{
+        this.userId = renter.id;
+        this.token = APPCrypt.encrypt(renter.id);
+        this.firstName = renter.firstName;
+        this.lastName = renter.lastName;
+    }
 }

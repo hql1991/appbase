@@ -107,8 +107,8 @@ public class OwnersService {
                 doc.append("prefNum",json.getInt("prefNum"));
             if (json.has("prefCook"))
                 doc.append("prefCook",json.getString("prefCook"));
-            if (json.has("emailAddress"))
-                doc.append("emailAddress",json.getString("emailAddress"));
+            if (json.has("email"))
+                doc.append("email",json.getString("email"));
             if (json.has("password"))
                 doc.append("password",json.getString("password"));
 
@@ -148,7 +148,7 @@ public class OwnersService {
         return new JSONObject();
     }
 
-    private Owner convertDocumentToOwner(Document item) {
+    public static Owner convertDocumentToOwner(Document item) {
         Owner owner = new Owner(
                 item.getString("userName"),
                 item.getString("firstName"),
@@ -157,7 +157,7 @@ public class OwnersService {
                 item.getString("prefJob"),
                 item.getInteger("prefNum"),
                 item.getString("prefCook"),
-                item.getString("emailAddress"),
+                item.getString("email"),
                 item.getString("password")
 
         );
@@ -173,7 +173,7 @@ public class OwnersService {
                 .append("prefJob", owner.getPrefJob())
                 .append("prefNum", owner.getPrefNum())
                 .append("prefCook", owner.getPrefCook())
-                .append("emailAddress", owner.getEmailAddress())
+                .append("email", owner.getEmailAddress())
                 .append("password", APPCrypt.encrypt(owner.getPassword()));
         return doc;
     }
@@ -187,7 +187,7 @@ public class OwnersService {
                 json.getString("prefJob"),
                 json.getInt("prefNum"),
                 json.getString("prefCook"),
-                json.getString("emailAddress"),
+                json.getString("email"),
                 json.getString("password"));
         return owner;
     }

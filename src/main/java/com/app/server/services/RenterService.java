@@ -1,5 +1,6 @@
 package com.app.server.services;
 
+import com.app.server.http.utils.APPCrypt;
 import com.app.server.models.Renter;
 import com.app.server.util.MongoPool;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -76,6 +77,9 @@ public class RenterService {
         } catch (JsonProcessingException e) {
             System.out.println("Failed to create a document");
             return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -111,6 +115,8 @@ public class RenterService {
                 doc.append("pref_num", json.getString("pref_num"));
             if (json.has("pref_cook"))
                 doc.append("pref_cook", json.getString("pref_cook"));
+            if (json.has("password"))
+                doc.append("password", json.getString("password"));
 
             Document set = new Document("$set", doc);
             return renterCollection.updateOne(query, set);
@@ -145,7 +151,7 @@ public class RenterService {
         return new JSONObject();
     }
 
-    private Renter convertDocumentToRenter(Document item) {
+    public static Renter convertDocumentToRenter(Document item) {
         Renter renter = new Renter(
                 item.getString("firstName"),
                 item.getString("lastName"),
@@ -157,14 +163,15 @@ public class RenterService {
                 item.getInteger("pref_gender"),
                 item.getInteger("pref_job"),
                 item.getInteger("pref_num"),
-                item.getInteger("pref_cook")
+                item.getInteger("pref_cook"),
+                item.getString("password")
         );
 
         renter.setId(item.getObjectId("_id").toString());
         return renter;
     }
 
-    private Document convertRenterToDocument(Renter renter) {
+    private Document convertRenterToDocument(Renter renter) throws Exception {
         Document doc = new Document("firstName", renter.getFirstName())
                 .append("lastName", renter.getLastName())
                 .append("email", renter.getEmail())
@@ -175,7 +182,8 @@ public class RenterService {
                 .append("pref_gender", renter.getPref_gender())
                 .append("pref_job", renter.getPref_job())
                 .append("pref_num", renter.getPref_num())
-                .append("pref_cook", renter.getPref_cook());
+                .append("pref_cook", renter.getPref_cook())
+                .append("password", APPCrypt.encrypt(renter.getPassword()));
         return doc;
     }
 
@@ -190,7 +198,8 @@ public class RenterService {
                 json.getInt("pref_gender"),
                 json.getInt("pref_job"),
                 json.getInt("pref_num"),
-                json.getInt("pref_cook"));
+                json.getInt("pref_cook"),
+                json.getString("password"));
         return renter;
     }
 

@@ -4,6 +4,7 @@ import com.app.server.http.exceptions.APPBadRequestException;
 import com.app.server.http.exceptions.APPInternalServerException;
 import com.app.server.http.exceptions.APPNotFoundException;
 import com.app.server.models.Owner;
+import com.app.server.models.Renter;
 import com.app.server.models.Session;
 import com.app.server.util.MongoPool;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,17 +24,17 @@ public class SessionService {
 
     private static SessionService self;
     private ObjectWriter ow;
-    private MongoCollection<Document> ownersCollection = null;
-    private MongoCollection<Document> houseCollection = null;
+    private MongoCollection<Document> ownerCollection = null;
+    private MongoCollection<Document> renterCollection = null;
 
     private SessionService() {
-        this.ownersCollection = MongoPool.getInstance().getCollection("owners");
-        this.houseCollection = MongoPool.getInstance().getCollection("houses");
+        this.ownerCollection = MongoPool.getInstance().getCollection("owners");
+        this.renterCollection = MongoPool.getInstance().getCollection("renters");
         ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
     }
 
-    public static SessionService getInstance(){
+    public static SessionService getInstance() {
         if (self == null)
             self = new SessionService();
         return self;
@@ -44,57 +45,40 @@ public class SessionService {
         JSONObject json = null;
         try {
             json = new JSONObject(ow.writeValueAsString(request));
-            if (!json.has("emailAddress"))
-                throw new APPBadRequestException(55, "missing emailAddress");
+            if (!json.has("email"))
+                throw new APPBadRequestException(55, "missing email");
             if (!json.has("password"))
                 throw new APPBadRequestException(55, "missing password");
             BasicDBObject query = new BasicDBObject();
 
-            query.put("emailAddress", json.getString("emailAddress"));
+            query.put("email", json.getString("email"));
             query.put("password", APPCrypt.encrypt(json.getString("password")));
             //query.put("password", json.getString("password"));
 
-            Document item = ownersCollection.find(query).first();
+            Document item = ownerCollection.find(query).first();
             if (item == null) {
-                throw new APPNotFoundException(0, "No user found matching credentials");
+                item = renterCollection.find(query).first();
+                if (item == null)
+                    throw new APPNotFoundException(0, "No user found matching credentials");
+                Renter renter = RenterService.convertDocumentToRenter(item);
+                renter.setId(item.getObjectId("_id").toString());
+                return new Session(renter);
             }
 
-            Owner owner = convertDocumentToOwner(item);
+            Owner owner = OwnersService.convertDocumentToOwner(item);
 
             owner.setId(item.getObjectId("_id").toString());
             return new Session(owner);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new APPBadRequestException(33, e.getMessage());
-        }
-        catch (APPBadRequestException e) {
+        } catch (APPBadRequestException e) {
             throw e;
-        }
-        catch (APPNotFoundException e) {
+        } catch (APPNotFoundException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new APPInternalServerException(0, e.getMessage());
         }
     }
-
-
-    private Owner convertDocumentToOwner(Document item) {
-        Owner owner = new Owner(
-                item.getString("userName"),
-                item.getString("firstName"),
-                item.getString("lastName"),
-                item.getString("prefGender"),
-                item.getString("prefJob"),
-                item.getInteger("prefNum"),
-                item.getString("prefCook"),
-                item.getString("emailAddress"),
-                item.getString("password")
-                );
-        owner.setId(item.getObjectId("_id").toString());
-        return owner;
-    }
-
 
 
 } // end of main()

@@ -31,7 +31,7 @@ public class Owner {
 
     public String getPrefCook() { return prefCook; }
 
-    public String getEmailAddress() { return emailAddress; }
+    public String getEmailAddress() { return email; }
 
     public String getPassword() { return password; }
 
@@ -44,7 +44,7 @@ public class Owner {
     String prefJob;
     int prefNum;
     String prefCook;
-    String emailAddress;
+    String email;
     String password;
 
     public Owner(
@@ -55,7 +55,7 @@ public class Owner {
             String prefJob,
             int prefNum,
             String prefCook,
-            String emailAddress,
+            String email,
             String password
     ) {
         this.userName = userName;
@@ -65,7 +65,7 @@ public class Owner {
         this.prefJob = prefJob;
         this.prefNum = prefNum;
         this.prefCook = prefCook;
-        this.emailAddress = emailAddress;
+        this.email = email;
         this.password = password;
 
     }
