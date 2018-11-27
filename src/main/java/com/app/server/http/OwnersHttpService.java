@@ -8,6 +8,7 @@ import com.app.server.models.House;
 import com.app.server.models.Owner;
 import com.app.server.services.HouseService;
 import com.app.server.services.OwnersService;
+import com.app.server.services.RentalService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -163,6 +164,58 @@ public class OwnersHttpService {
         public APPResponse delete(@PathParam("ownerid") String ownerid) {
 
             return new APPResponse(service.deleteAllHousesOf(ownerid));
+        }
+    }
+
+    @Path("owners/{ownerId}/rentals")
+    public static class RentalHttpService {
+        private RentalService service = RentalService.getInstance();
+
+
+        @OPTIONS
+        @PermitAll
+        public Response optionsById() {
+            return Response.ok().build();
+        }
+
+        @GET
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse getAllRentalsOfOwner(@PathParam("ownerId") String ownerId) {
+
+            System.out.println(ownerId);
+            return new APPResponse(service.getAllRentalsOfOwner(ownerId));
+        }
+
+        @POST
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse create(Object request) {
+            return new APPResponse(service.create(request));
+        }
+
+        @PATCH
+        @Path("{id}")
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse update(@PathParam("id") String id, Object request) {
+
+            return new APPResponse(service.update(id, request));
+
+        }
+
+        @DELETE
+        @Path("{id}")
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse delete(@PathParam("id") String id) {
+
+            return new APPResponse(service.delete(id));
+        }
+
+        @DELETE
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse delete() {
+
+            return new APPResponse(service.deleteAll());
         }
     }
 }

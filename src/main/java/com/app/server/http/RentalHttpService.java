@@ -37,24 +37,6 @@ public class RentalHttpService {
         return new APPResponse(service.getAll());
     }
 
-    @GET
-    @Path("renter/{renterId}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public APPResponse getAllSent(@PathParam("renterId") String renterId) {
-
-        return new APPResponse(service.getAllRentalsOfRenter(renterId));
-    }
-
-    @GET
-    @Path("owner/{ownerId}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public APPResponse getAllReceived(@PathParam("ownerId") String ownerId) {
-
-        System.out.println(ownerId);
-        return new APPResponse(service.getAllRentalsOfOwner(ownerId));
-    }
-
-
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})

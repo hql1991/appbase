@@ -8,7 +8,10 @@ import com.app.server.models.Photo;
 import com.app.server.models.Renter;
 import com.app.server.services.AppointmentService;
 import com.app.server.services.PhotoService;
+import com.app.server.services.RentalService;
 import com.app.server.services.RenterService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.bson.types.ObjectId;
 
 import javax.annotation.security.PermitAll;
@@ -242,5 +245,57 @@ public class RenterHttpService {
         }
 
     }
+
+    @Path("renters/{renterId}/rentals")
+    public static class RentalHttpService {
+        private RentalService service = RentalService.getInstance();
+
+        @OPTIONS
+        @PermitAll
+        public Response optionsById() {
+            return Response.ok().build();
+        }
+
+        @GET
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse getAllRentalsOfRenter(@PathParam("renterId") String renterId) {
+
+            return new APPResponse(service.getAllRentalsOfRenter(renterId));
+        }
+
+        @POST
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse create(Object request) {
+            return new APPResponse(service.create(request));
+        }
+
+        @PATCH
+        @Path("{id}")
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse update(@PathParam("id") String id, Object request) {
+
+            return new APPResponse(service.update(id, request));
+
+        }
+
+        @DELETE
+        @Path("{id}")
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse delete(@PathParam("id") String id) {
+
+            return new APPResponse(service.delete(id));
+        }
+
+        @DELETE
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse delete() {
+
+            return new APPResponse(service.deleteAll());
+        }
+
+    }
+
 }
 
