@@ -14,6 +14,11 @@ import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class PaymentService {
@@ -28,7 +33,7 @@ public class PaymentService {
 
     }
 
-    public static PaymentService getInstance(){
+    public static PaymentService getInstance() {
         if (self == null)
             self = new PaymentService();
         return self;
@@ -60,17 +65,56 @@ public class PaymentService {
     }
 
     public Payment create(Object request) {
+        JSONObject paymentJSON = null;
 
+        // Calling the Mock Payment api.
         try {
-            JSONObject json = null;
-            json = new JSONObject(ow.writeValueAsString(request));
-            Payment payment = convertJsonToPayment(json);
+            paymentJSON = new JSONObject(ow.writeValueAsString(request));
+
+
+            URL url = new URL("http://localhost:8080/api/mockPayment/pay");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoInput(true);
+
+            con.setDoOutput(true);
+
+            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+            wr.write(paymentJSON.toString());
+            wr.flush();
+
+
+            int status = con.getResponseCode();
+            System.out.println(status);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer content = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            System.out.println(content);
+
+            paymentJSON = new JSONObject(content.toString());
+
+            con.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Use the JSON returned with the transactionId to create a payment record in db.
+        try {
+            Payment payment = convertJsonToPayment(paymentJSON);
             Document doc = convertPaymentToDocument(payment);
             paymentsCollection.insertOne(doc);
-            ObjectId id = (ObjectId)doc.get( "_id" );
+            ObjectId id = (ObjectId) doc.get("_id");
             payment.setId(id.toString());
             return payment;
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             System.out.println("Failed to create a document");
             return null;
         } catch (Exception e) {
@@ -90,29 +134,26 @@ public class PaymentService {
 
             Document doc = new Document();
             if (json.has("transactionId"))
-                doc.append("transactionId",json.getString("transactionId"));
+                doc.append("transactionId", json.getString("transactionId"));
             if (json.has("amount"))
-                doc.append("amount",json.getString("amount"));
+                doc.append("amount", json.getString("amount"));
             if (json.has("rentalId"))
-                doc.append("rentalId",json.getString("rentalId"));
+                doc.append("rentalId", json.getString("rentalId"));
 
             Document set = new Document("$set", doc);
-            paymentsCollection.updateOne(query,set);
+            paymentsCollection.updateOne(query, set);
             return request;
 
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             System.out.println("Failed to update a document");
             return null;
 
 
-        }
-        catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             System.out.println("Failed to create a document");
             return null;
         }
     }
-
-
 
 
     public Object delete(String id) {
@@ -135,7 +176,7 @@ public class PaymentService {
     private Payment convertDocumentToPayment(Document item) {
         Payment payment = new Payment(
                 item.getString("transactionId"),
-                item.getString("amount"),
+                item.getDouble("amount"),
                 item.getString("rentalId")
 
         );
@@ -143,17 +184,17 @@ public class PaymentService {
         return payment;
     }
 
-    private Document convertPaymentToDocument(Payment payment) throws Exception{
+    private Document convertPaymentToDocument(Payment payment) throws Exception {
         Document doc = new Document("transactionId", payment.getTransactionId())
                 .append("amount", payment.getAmount())
                 .append("rentalId", payment.getRentalId());
         return doc;
     }
 
-    private Payment convertJsonToPayment(JSONObject json){
+    public static Payment convertJsonToPayment(JSONObject json) {
         Payment payment = new Payment(
                 json.getString("transactionId"),
-                json.getString("amount"),
+                json.getDouble("amount"),
                 json.getString("rentalId"));
         return payment;
     }

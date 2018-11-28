@@ -10,7 +10,7 @@ public class Payment {
         return transactionId;
     }
 
-    public String getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
@@ -18,23 +18,21 @@ public class Payment {
         return rentalId;
     }
 
-    String id =null;
+    String id = null;
     String transactionId;
-    String amount;
+    Double amount;
     String rentalId;
 
-    public Payment(
-            String transactionId,
-            String amount,
-            String rentalId
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
 
-    ) {
+    public Payment(String transactionId, Double amount, String rentalId) {
         this.transactionId = transactionId;
         this.amount = amount;
         this.rentalId = rentalId;
-
-
     }
+
     public void setId(String ownerid) {
         this.id = ownerid;
     }
