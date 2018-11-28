@@ -3,6 +3,7 @@ package com.app.server.services;
 import com.app.server.http.exceptions.APPBadRequestException;
 import com.app.server.http.exceptions.APPInternalServerException;
 import com.app.server.http.exceptions.APPNotFoundException;
+import com.app.server.http.exceptions.APPUnauthorizedException;
 import com.app.server.models.Owner;
 import com.app.server.models.Renter;
 import com.app.server.models.Session;
@@ -15,6 +16,8 @@ import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.json.JSONObject;
 import com.app.server.http.utils.APPCrypt;
+
+import javax.ws.rs.core.HttpHeaders;
 
 /**
  * Services run as singletons
@@ -80,5 +83,28 @@ public class SessionService {
         }
     }
 
+    public static boolean validateToken(String userId, HttpHeaders httpHeaders) {
+
+        String AUTHENTICATION_SCHEME = "Bearer";
+        String authorizationString = httpHeaders.getHeaderString(HttpHeaders.AUTHORIZATION);
+
+        if (authorizationString == null || !authorizationString.startsWith(AUTHENTICATION_SCHEME)) {
+            throw new APPUnauthorizedException(99, "Invalid token!");
+        }
+
+        String token = authorizationString.substring(AUTHENTICATION_SCHEME.length()).trim();
+        String decrypted;
+
+        try {
+            decrypted = APPCrypt.decrypt(token);
+        } catch (Exception e) {
+            throw new APPUnauthorizedException(99, "Invalid token!");
+        }
+
+        if (userId.equals(decrypted))
+            return true;
+        else
+            throw new APPUnauthorizedException(100, "UnAuthorized user!");
+    }
 
 } // end of main()

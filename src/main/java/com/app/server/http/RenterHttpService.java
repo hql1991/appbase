@@ -3,19 +3,14 @@ package com.app.server.http;
 import com.app.server.http.exceptions.APPNotFoundException;
 import com.app.server.http.utils.APPResponse;
 import com.app.server.http.utils.PATCH;
-import com.app.server.models.Appointment;
 import com.app.server.models.Photo;
 import com.app.server.models.Renter;
-import com.app.server.services.AppointmentService;
-import com.app.server.services.PhotoService;
-import com.app.server.services.RentalService;
-import com.app.server.services.RenterService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import org.bson.types.ObjectId;
+import com.app.server.services.*;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -94,7 +89,14 @@ public class RenterHttpService {
     //Subresource as subclass
     @Path("renters/{renterId}/photos")
     public static class PhotoHttpService {
-        private PhotoService service = PhotoService.getInstance();
+        private PhotoService service;
+
+
+        public PhotoHttpService(@PathParam("renterId") String renterId, @Context HttpHeaders httpHeaders) {
+            this.service = PhotoService.getInstance();
+
+            SessionService.validateToken(renterId, httpHeaders);
+        }
 
         @OPTIONS
         @PermitAll
@@ -163,7 +165,13 @@ public class RenterHttpService {
 
     @Path("renters/{renterId}/appointments")
     public static class AppointmentHttpService {
-        private AppointmentService service = AppointmentService.getInstance();
+        private AppointmentService service;
+
+        public AppointmentHttpService(@PathParam("renterId") String renterId, @Context HttpHeaders httpHeaders) {
+            this.service = AppointmentService.getInstance();
+
+            SessionService.validateToken(renterId, httpHeaders);
+        }
 
         @OPTIONS
         @PermitAll
@@ -248,7 +256,13 @@ public class RenterHttpService {
 
     @Path("renters/{renterId}/rentals")
     public static class RentalHttpService {
-        private RentalService service = RentalService.getInstance();
+        private RentalService service;
+
+        public RentalHttpService(@PathParam("renterId") String renterId, @Context HttpHeaders httpHeaders) {
+            this.service = RentalService.getInstance();
+
+            SessionService.validateToken(renterId, httpHeaders);
+        }
 
         @OPTIONS
         @PermitAll
