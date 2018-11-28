@@ -95,7 +95,7 @@ public class RenterHttpService {
         public PhotoHttpService(@PathParam("renterId") String renterId, @Context HttpHeaders httpHeaders) {
             this.service = PhotoService.getInstance();
 
-            SessionService.validateToken(renterId, httpHeaders);
+//            SessionService.validateToken(renterId, httpHeaders);
         }
 
         @OPTIONS

@@ -103,7 +103,7 @@ public class OwnersHttpService {
         public HouseHttpService(@PathParam("ownerId") String ownerId, @Context HttpHeaders httpHeaders) {
             service = HouseService.getInstance();
 
-            SessionService.validateToken(ownerId, httpHeaders);
+//            SessionService.validateToken(ownerId, httpHeaders);
         }
 
         @OPTIONS
