@@ -1,6 +1,7 @@
 package com.app.server.services;
 
 import com.app.server.http.utils.APPCrypt;
+import com.app.server.http.utils.Hash;
 import com.app.server.models.Owner;
 
 import com.app.server.http.exceptions.APPNotFoundException;
@@ -174,7 +175,7 @@ public class OwnersService {
                 .append("prefNum", owner.getPrefNum())
                 .append("prefCook", owner.getPrefCook())
                 .append("email", owner.getEmailAddress())
-                .append("password", APPCrypt.encrypt(owner.getPassword()));
+                .append("password", Hash.MD5Hash(owner.getPassword()));
         return doc;
     }
 

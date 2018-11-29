@@ -4,6 +4,7 @@ import com.app.server.http.exceptions.APPBadRequestException;
 import com.app.server.http.exceptions.APPInternalServerException;
 import com.app.server.http.exceptions.APPNotFoundException;
 import com.app.server.http.exceptions.APPUnauthorizedException;
+import com.app.server.http.utils.Hash;
 import com.app.server.models.Owner;
 import com.app.server.models.Renter;
 import com.app.server.models.Session;
@@ -55,7 +56,7 @@ public class SessionService {
             BasicDBObject query = new BasicDBObject();
 
             query.put("email", json.getString("email"));
-            query.put("password", APPCrypt.encrypt(json.getString("password")));
+            query.put("password", Hash.MD5Hash(json.getString("password")));
             //query.put("password", json.getString("password"));
 
             Document item = ownerCollection.find(query).first();

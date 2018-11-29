@@ -1,6 +1,7 @@
 package com.app.server.services;
 
 import com.app.server.http.utils.APPCrypt;
+import com.app.server.http.utils.Hash;
 import com.app.server.models.Renter;
 import com.app.server.util.MongoPool;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -183,7 +184,7 @@ public class RenterService {
                 .append("pref_job", renter.getPref_job())
                 .append("pref_num", renter.getPref_num())
                 .append("pref_cook", renter.getPref_cook())
-                .append("password", APPCrypt.encrypt(renter.getPassword()));
+                .append("password", Hash.MD5Hash(renter.getPassword()));
         return doc;
     }
 
