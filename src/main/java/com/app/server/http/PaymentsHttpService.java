@@ -5,9 +5,7 @@ import com.app.server.http.exceptions.APPNotFoundException;
 import com.app.server.http.utils.APPResponse;
 import com.app.server.http.utils.PATCH;
 import com.app.server.models.Payment;
-import com.app.server.models.Rental;
 import com.app.server.services.PaymentService;
-import com.app.server.services.RentalService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -43,14 +41,14 @@ public class PaymentsHttpService {
     }
 
     @GET
-    @Path("{transactionId}")
+    @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public APPResponse getOne(@PathParam("transactionId") String transactionId) {
+    public APPResponse getOne(@PathParam("id") String id) {
         try {
-            Payment d = service.getOne(transactionId);
+            Payment d = service.getOne(id);
             if (d == null)
                 throw new APPNotFoundException(56, "Payment not found");
-            return new APPResponse(service.getOne(transactionId));
+            return new APPResponse(service.getOne(id));
         } catch (IllegalArgumentException e) {
             throw new APPNotFoundException(56, "Payment not found");
         } catch (Exception e) {
@@ -67,12 +65,12 @@ public class PaymentsHttpService {
     }
 
     @PATCH
-    @Path("{transactionId}")
+    @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public APPResponse update(@PathParam("transactionId") String transactionId, Object request) {
+    public APPResponse update(@PathParam("id") String id, Object request) {
 
-        return new APPResponse(service.update(transactionId, request));
+        return new APPResponse(service.update(id, request));
 
     }
 
