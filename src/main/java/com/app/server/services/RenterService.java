@@ -11,6 +11,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -165,7 +166,8 @@ public class RenterService {
                 item.getInteger("pref_job"),
                 item.getInteger("pref_num"),
                 item.getInteger("pref_cook"),
-                item.getString("password")
+                item.getString("password"),
+                item.get("salt", Binary.class).getData()
         );
 
         renter.setId(item.getObjectId("_id").toString());
@@ -173,6 +175,9 @@ public class RenterService {
     }
 
     private Document convertRenterToDocument(Renter renter) throws Exception {
+        byte[] salt = Hash.generateSalt();
+        String saltedHash = Hash.PBKDF2Hash(renter.getPassword(), salt);
+
         Document doc = new Document("firstName", renter.getFirstName())
                 .append("lastName", renter.getLastName())
                 .append("email", renter.getEmail())
@@ -184,7 +189,8 @@ public class RenterService {
                 .append("pref_job", renter.getPref_job())
                 .append("pref_num", renter.getPref_num())
                 .append("pref_cook", renter.getPref_cook())
-                .append("password", Hash.MD5Hash(renter.getPassword()));
+                .append("password", saltedHash)
+                .append("salt", salt);
         return doc;
     }
 
@@ -200,7 +206,8 @@ public class RenterService {
                 json.getInt("pref_job"),
                 json.getInt("pref_num"),
                 json.getInt("pref_cook"),
-                json.getString("password"));
+                json.getString("password"),
+                null);
         return renter;
     }
 

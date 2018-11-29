@@ -56,7 +56,7 @@ public class SessionService {
             BasicDBObject query = new BasicDBObject();
 
             query.put("email", json.getString("email"));
-            query.put("password", Hash.MD5Hash(json.getString("password")));
+            //query.put("password", Hash.MD5Hash(json.getString("password")));
             //query.put("password", json.getString("password"));
 
             Document item = ownerCollection.find(query).first();
@@ -64,12 +64,20 @@ public class SessionService {
                 item = renterCollection.find(query).first();
                 if (item == null)
                     throw new APPNotFoundException(0, "No user found matching credentials");
+
                 Renter renter = RenterService.convertDocumentToRenter(item);
+                String saltedHash = Hash.PBKDF2Hash(json.getString("password"), renter.getSalt());
+                if (!saltedHash.equals(renter.getPassword()))
+                    throw new APPNotFoundException(0, "No user found matching credentials");
+
                 renter.setId(item.getObjectId("_id").toString());
                 return new Session(renter);
             }
 
             Owner owner = OwnersService.convertDocumentToOwner(item);
+            String saltedHash = Hash.PBKDF2Hash(json.getString("password"), owner.getSalt());
+            if (!saltedHash.equals(owner.getPassword()))
+                throw new APPNotFoundException(0, "No user found matching credentials");
 
             owner.setId(item.getObjectId("_id").toString());
             return new Session(owner);

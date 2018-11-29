@@ -13,6 +13,7 @@ public class Owner {
     public String getFirstName() {
         return firstName;
     }
+
     public String getLastName() {
         return lastName;
     }
@@ -29,14 +30,23 @@ public class Owner {
         return prefNum;
     }
 
-    public String getPrefCook() { return prefCook; }
+    public String getPrefCook() {
+        return prefCook;
+    }
 
-    public String getEmailAddress() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 
+    public byte[] getSalt() {
+        return salt;
+    }
 
-    String id =null;
+    String id = null;
     String userName;
     String firstName;
     String lastName;
@@ -46,6 +56,7 @@ public class Owner {
     String prefCook;
     String email;
     String password;
+    byte[] salt;
 
     public Owner(
             String userName,
@@ -56,7 +67,8 @@ public class Owner {
             int prefNum,
             String prefCook,
             String email,
-            String password
+            String password,
+            byte[] salt
     ) {
         this.userName = userName;
         this.firstName = firstName;
@@ -67,8 +79,9 @@ public class Owner {
         this.prefCook = prefCook;
         this.email = email;
         this.password = password;
-
+        this.salt=salt;
     }
+
     public void setId(String ownerid) {
         this.id = ownerid;
     }
