@@ -7,20 +7,22 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
-public class Client {
-    public static void main(String[] argv) {
+
+public class RoommateRecInit {
+
+    public static void init(String[] renterIds, List<String>[] roommateIds) {
         doDeleteAll();
-        doPost("James", "", "Madison","34 Main Street", "", "SuperTown", "AZ", "us", "67363");
-        doPost("Sue", "", "Mann","67 Fifth Street", "", "Anytown", "CA", "us", "62723");
-        doPost("Peter", "Q", "Pearson","6733 Fallen Leaf Street", "", "MagicTown", "ON", "ca", "56TY87");
+        doPost(renterIds[0], roommateIds[0]);
+        doPost(renterIds[1], roommateIds[1]);
+
         doGetAll();
     }
 
-    public static void doPost(String firstName,String middleName, String lastName, String address1, String address2,
-                              String city, String state, String country, String postalCode){
+    public static void doPost(String renterId, List<String> roommate_recolist){
         try {
-            URL url = new URL("http://localhost:8080/api/drivers");
+            URL url = new URL("http://localhost:8080/api/rec/renters");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
@@ -29,19 +31,12 @@ public class Client {
 
             con.setDoOutput(true);
 
-            JSONObject driver = new JSONObject();
-            driver.put("firstName",firstName);
-            driver.put("middleName",middleName);
-            driver.put("lastName",lastName);
-            driver.put("address1",address1);
-            driver.put("address2",address2);
-            driver.put("city",city);
-            driver.put("state",state);
-            driver.put("country",country);
-            driver.put("postalCode",postalCode);
+            JSONObject renterRec = new JSONObject();
+            renterRec.put("renterId",renterId);
+            renterRec.put("roommate_recolist",roommate_recolist);
 
             OutputStreamWriter wr= new OutputStreamWriter(con.getOutputStream());
-            wr.write(driver.toString());
+            wr.write(renterRec.toString());
             wr.flush();
 
 
@@ -61,7 +56,6 @@ public class Client {
         }
         catch(Exception e) {
             e.printStackTrace();
-
         }
 
     }
@@ -69,7 +63,7 @@ public class Client {
 
     public static void doGetAll() {
         try {
-            URL url = new URL("http://localhost:8080/api/drivers");
+            URL url = new URL("http://localhost:8080/api/rec/renters");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             int status = con.getResponseCode();
@@ -87,13 +81,12 @@ public class Client {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-
         }
     }
 
     public static void doDeleteAll() {
         try {
-            URL url = new URL("http://localhost:8080/api/drivers");
+            URL url = new URL("http://localhost:8080/api/rec/renters");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("DELETE");
             int status = con.getResponseCode();
@@ -111,14 +104,10 @@ public class Client {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
-
         }
 
     }
 
 
-
-
-
-
 }
+

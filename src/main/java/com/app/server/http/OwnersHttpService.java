@@ -8,11 +8,15 @@ import com.app.server.models.House;
 import com.app.server.models.Owner;
 import com.app.server.services.HouseService;
 import com.app.server.services.OwnersService;
+import com.app.server.services.RentalService;
+import com.app.server.services.SessionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -92,13 +96,14 @@ public class OwnersHttpService {
     }
 
 
-    @Path("/owners/{ownerid}/houses")
-
+    @Path("/owners/{ownerId}/houses")
     public static class HouseHttpService {
         private HouseService service;
 
-        public HouseHttpService() {
+        public HouseHttpService(@PathParam("ownerId") String ownerId, @Context HttpHeaders httpHeaders) {
             service = HouseService.getInstance();
+
+//            SessionService.validateToken(ownerId, httpHeaders);
         }
 
         @OPTIONS
@@ -110,7 +115,7 @@ public class OwnersHttpService {
 
         @GET
         @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse getAll(@PathParam("ownerid") String ownerid) {
+        public APPResponse getAll(@PathParam("ownerId") String ownerid) {
 
             return new APPResponse(service.getAllHousesOf(ownerid));
         }
@@ -118,7 +123,7 @@ public class OwnersHttpService {
         @GET
         @Path("{houseid}")
         @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse getOne(@PathParam("ownerid") String ownerid, @PathParam("houseid") String houseid) {
+        public APPResponse getOne(@PathParam("ownerId") String ownerid, @PathParam("houseid") String houseid) {
             try {
                 House d = service.getOne(ownerid, houseid);
                 if (d == null)
@@ -135,7 +140,7 @@ public class OwnersHttpService {
         @POST
         @Consumes({MediaType.APPLICATION_JSON})
         @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse create(@PathParam("ownerid") String ownerid, Object request) {
+        public APPResponse create(@PathParam("ownerId") String ownerid, Object request) {
             return new APPResponse(service.create(request));
         }
         //didn't do input validation
@@ -144,7 +149,7 @@ public class OwnersHttpService {
         @Path("{houseid}")
         @Consumes({MediaType.APPLICATION_JSON})
         @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse update(@PathParam("ownerid") String ownerid, @PathParam("houseid") String houseid, Object request) {
+        public APPResponse update(@PathParam("ownerId") String ownerid, @PathParam("houseid") String houseid, Object request) {
 
             return new APPResponse(service.update(ownerid, houseid, request));
 
@@ -153,16 +158,73 @@ public class OwnersHttpService {
         @DELETE
         @Path("{houseid}")
         @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse delete(@PathParam("ownerid") String ownerid, @PathParam("houseid") String houseid) {
+        public APPResponse delete(@PathParam("ownerId") String ownerid, @PathParam("houseid") String houseid) {
 
             return new APPResponse(service.delete(ownerid, houseid));
         }
 
         @DELETE
         @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse delete(@PathParam("ownerid") String ownerid) {
+        public APPResponse delete(@PathParam("ownerId") String ownerid) {
 
             return new APPResponse(service.deleteAllHousesOf(ownerid));
+        }
+    }
+
+    @Path("owners/{ownerId}/rentals")
+    public static class RentalHttpService {
+        private RentalService service;
+
+        public RentalHttpService(@PathParam("ownerId") String ownerId, @Context HttpHeaders httpHeaders) {
+            this.service = RentalService.getInstance();
+
+            SessionService.validateToken(ownerId, httpHeaders);
+        }
+
+        @OPTIONS
+        @PermitAll
+        public Response optionsById() {
+            return Response.ok().build();
+        }
+
+        @GET
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse getAllRentalsOfOwner(@PathParam("ownerId") String ownerId) {
+
+            System.out.println(ownerId);
+            return new APPResponse(service.getAllRentalsOfOwner(ownerId));
+        }
+
+        @POST
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse create(Object request) {
+            return new APPResponse(service.create(request));
+        }
+
+        @PATCH
+        @Path("{id}")
+        @Consumes({MediaType.APPLICATION_JSON})
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse update(@PathParam("id") String id, Object request) {
+
+            return new APPResponse(service.update(id, request));
+
+        }
+
+        @DELETE
+        @Path("{id}")
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse delete(@PathParam("id") String id) {
+
+            return new APPResponse(service.delete(id));
+        }
+
+        @DELETE
+        @Produces({MediaType.APPLICATION_JSON})
+        public APPResponse delete() {
+
+            return new APPResponse(service.deleteAll());
         }
     }
 }

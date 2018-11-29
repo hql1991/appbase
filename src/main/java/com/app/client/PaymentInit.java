@@ -1,45 +1,42 @@
 package com.app.client;
 
-import com.app.server.services.RentalService;
+import com.app.server.services.PaymentService;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class RentalInit {
-    private static RentalService rentalService = RentalService.getInstance();
+public class PaymentInit {
+    private static PaymentService paymentService = PaymentService.getInstance();
 
-    public static String[] init(String[] renterIds, String[] ownerIds) {
+    public static void init(String[] argv) {
         doDeleteAll();
-        String[] rentalIds = new String[3];
-        rentalIds[0] = doPost(renterIds[0], ownerIds[0], "08202018", "08192019", "08102018");
-        rentalIds[1] = doPost(renterIds[1], ownerIds[1], "06102017", "08102018", "06012017");
-        rentalIds[2] = doPost(renterIds[2], ownerIds[2], "01102013", "09102013", "01092013");
+        doPost("", "500", argv[0]);
+        doPost("", "1000", argv[1]);
+        doPost("", "233", argv[2]);
         doGetAll();
-        return rentalIds;
     }
 
-    public static String doPost(String renterId, String ownerId, String startDate, String endDate, String timeStamp) {
+    public static String doPost(String transactionId, String amount, String rentalId) {
 
-        JSONObject rental = new JSONObject();
-        rental.put("renterId", renterId);
-        rental.put("ownerId", ownerId);
-        rental.put("startDate", startDate);
-        rental.put("endDate", endDate);
-        rental.put("timeStamp", timeStamp);
 
-        return rentalService.create(rental.toMap()).getId();
+        JSONObject payment = new JSONObject();
+        payment.put("transactionId", transactionId);
+        payment.put("amount", amount);
+        payment.put("rentalId", rentalId);
+
+
+        return paymentService.create(payment.toMap()).getId();
 
     }
 
 
     public static void doGetAll() {
         try {
-            URL url = new URL("http://localhost:8080/api/rentals");
+            URL url = new URL("http://localhost:8080/api/payments");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             int status = con.getResponseCode();
@@ -57,12 +54,13 @@ public class RentalInit {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
+
         }
     }
 
     public static void doDeleteAll() {
         try {
-            URL url = new URL("http://localhost:8080/api/rentals");
+            URL url = new URL("http://localhost:8080/api/payments");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("DELETE");
             int status = con.getResponseCode();
@@ -80,10 +78,10 @@ public class RentalInit {
             con.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
+
         }
 
     }
 
 
 }
-

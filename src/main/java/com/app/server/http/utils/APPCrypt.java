@@ -12,7 +12,7 @@ public class APPCrypt {
 
     public static void  main(String argv[]){
         try {
-            String message ="sue@mann.com";
+            String message ="5bfcdebb23bd942d24489579";
             System.out.println("Raw message " + message);
             String enryptedMessage = APPCrypt.encrypt(message);
             System.out.println("Encrypted message: " + enryptedMessage);
@@ -38,7 +38,7 @@ public class APPCrypt {
         Cipher c = Cipher.getInstance(ALGO);
         c.init(Cipher.ENCRYPT_MODE, key);
         byte[] encVal = c.doFinal(data.getBytes());
-        return Base64.getEncoder().encodeToString(encVal);
+        return Base64.getUrlEncoder().encodeToString(encVal);
     }
 
     /**
@@ -51,7 +51,7 @@ public class APPCrypt {
         Key key = generateKey();
         Cipher c = Cipher.getInstance(ALGO);
         c.init(Cipher.DECRYPT_MODE, key);
-        byte[] decordedValue = Base64.getDecoder().decode(encryptedData);
+        byte[] decordedValue = Base64.getUrlDecoder().decode(encryptedData);
         byte[] decValue = c.doFinal(decordedValue);
         return new String(decValue);
     }

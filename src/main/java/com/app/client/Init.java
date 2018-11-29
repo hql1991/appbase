@@ -20,7 +20,8 @@ public class Init {
         PhotoInit.init(renterIds);
         String[] ownerIds = OwnerInit.init();
         String[] houseIds = HouseInit.init(ownerIds);
-        RentalInit.init(renterIds, ownerIds);
+        String[] rentalIds = RentalInit.init(renterIds, ownerIds);
+        PaymentInit.init(rentalIds);
 
         List<String> house_recolist0 = new ArrayList<>();
         house_recolist0.add(houseIds[1]);
@@ -29,11 +30,22 @@ public class Init {
         house_recolist1.add(houseIds[0]);
         house_recolist1.add(houseIds[2]);
         List<String>[] houseRecommendationLists = new List[2];
-        houseRecommendationLists[0]=house_recolist0;
-        houseRecommendationLists[1]=house_recolist1;
+        houseRecommendationLists[0] = house_recolist0;
+        houseRecommendationLists[1] = house_recolist1;
         HouseRecInit.init(renterIds, houseRecommendationLists);
 
-        AppointmentInit.init(renterIds,ownerIds);
+        List<String> roommate_recolist0 = new ArrayList<>();
+        roommate_recolist0.add(ownerIds[0]);
+        roommate_recolist0.add(ownerIds[1]);
+        List<String> roommate_recolist1 = new ArrayList<>();
+        roommate_recolist1.add(ownerIds[0]);
+        roommate_recolist1.add(ownerIds[2]);
+        List<String>[] renterRecommendationLists = new List[2];
+        renterRecommendationLists[0] = roommate_recolist0;
+        renterRecommendationLists[1] = roommate_recolist1;
+        RoommateRecInit.init(renterIds, renterRecommendationLists);
+
+        AppointmentInit.init(renterIds, ownerIds);
     }
 
 

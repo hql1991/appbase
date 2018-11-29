@@ -18,9 +18,9 @@ public class RenterInit {
 
         String[] ids = new String[3];
 
-        ids[0] = doPost("Qianli", "Hu", "qianli.hu@sv.cmu.edu", 1, 1, 1, 1, 1, 1, 1, 0);
-        ids[1] = doPost("James", "Harden", "james.harden@rockets.nba.com", 1, 2, 1, 0, 0, 3, 1, 1);
-        ids[2] = doPost("Yuki", "Wang", "yuki.wang@sv.cmu.edu", 0, 1, 2, 2, 2, 2, 2, 2);
+        ids[0] = doPost("Qianli", "Hu", "qianli.hu@sv.cmu.edu", 1, 1, 1, 1, 1, 1, 1, 0,"123");
+        ids[1] = doPost("James", "Harden", "james.harden@rockets.nba.com", 1, 2, 1, 0, 0, 3, 1, 1,"234");
+        ids[2] = doPost("Yuki", "Wang", "yuki.wang@sv.cmu.edu", 0, 1, 2, 2, 2, 2, 2, 2,"345");
 
         doGetAll();
 
@@ -28,7 +28,7 @@ public class RenterInit {
     }
 
     public static String doPost(String firstName, String lastName, String email, int gender, int job,
-                                int num, int cook, int pref_gender, int pref_job, int pref_num, int pref_cook) {
+                                int num, int cook, int pref_gender, int pref_job, int pref_num, int pref_cook, String password) {
 //        try {
 //            URL url = new URL("http://localhost:8080/api/renters");
 //            HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -88,6 +88,7 @@ public class RenterInit {
         renterJSON.put("pref_job", pref_job);
         renterJSON.put("pref_num", pref_num);
         renterJSON.put("pref_cook", pref_cook);
+        renterJSON.put("password",password);
 
         Renter renter = renterService.create(renterJSON.toMap());
         return renter.getId();

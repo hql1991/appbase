@@ -1,9 +1,8 @@
 package com.app.server.services;
 
+import com.app.server.http.utils.Hash;
 import com.app.server.models.Owner;
 
-import com.app.server.http.exceptions.APPNotFoundException;
-import com.app.server.http.utils.APPResponse;
 import com.app.server.util.MongoPool;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,12 +11,12 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class OwnersService {
 
@@ -31,7 +30,7 @@ public class OwnersService {
 
     }
 
-    public static OwnersService getInstance(){
+    public static OwnersService getInstance() {
         if (self == null)
             self = new OwnersService();
         return self;
@@ -70,11 +69,14 @@ public class OwnersService {
             Owner owner = convertJsonToOwner(json);
             Document doc = convertOwnerToDocument(owner);
             ownersCollection.insertOne(doc);
-            ObjectId id = (ObjectId)doc.get( "_id" );
+            ObjectId id = (ObjectId) doc.get("_id");
             owner.setId(id.toString());
             return owner;
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             System.out.println("Failed to create a document");
+            return null;
+        } catch (Exception e) {
+            System.out.println("Failed to create a document" + e.getMessage());
             return null;
         }
     }
@@ -90,37 +92,38 @@ public class OwnersService {
 
             Document doc = new Document();
             if (json.has("userName"))
-                doc.append("userName",json.getString("userName"));
+                doc.append("userName", json.getString("userName"));
             if (json.has("firstName"))
-                doc.append("firstName",json.getString("firstName"));
+                doc.append("firstName", json.getString("firstName"));
             if (json.has("lastName"))
-                doc.append("lastName",json.getString("lastName"));
+                doc.append("lastName", json.getString("lastName"));
             if (json.has("prefGender"))
-                doc.append("prefGender",json.getString("prefGender"));
+                doc.append("prefGender", json.getString("prefGender"));
             if (json.has("prefJob"))
-                doc.append("prefJob",json.getString("prefJob"));
+                doc.append("prefJob", json.getString("prefJob"));
             if (json.has("prefNum"))
-                doc.append("prefNum",json.getInt("prefNum"));
+                doc.append("prefNum", json.getInt("prefNum"));
             if (json.has("prefCook"))
-                doc.append("prefCook",json.getString("prefCook"));
+                doc.append("prefCook", json.getString("prefCook"));
+            if (json.has("email"))
+                doc.append("email", json.getString("email"));
+            if (json.has("password"))
+                doc.append("password", json.getString("password"));
 
             Document set = new Document("$set", doc);
-            ownersCollection.updateOne(query,set);
+            ownersCollection.updateOne(query, set);
             return request;
 
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             System.out.println("Failed to update a document");
             return null;
 
 
-        }
-        catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             System.out.println("Failed to create a document");
             return null;
         }
     }
-
-
 
 
     public Object delete(String id) {
@@ -140,7 +143,7 @@ public class OwnersService {
         return new JSONObject();
     }
 
-    private Owner convertDocumentToOwner(Document item) {
+    public static Owner convertDocumentToOwner(Document item) {
         Owner owner = new Owner(
                 item.getString("userName"),
                 item.getString("firstName"),
@@ -148,24 +151,33 @@ public class OwnersService {
                 item.getString("prefGender"),
                 item.getString("prefJob"),
                 item.getInteger("prefNum"),
-                item.getString("prefCook")
+                item.getString("prefCook"),
+                item.getString("email"),
+                item.getString("password"),
+                item.get("salt", Binary.class).getData()
         );
         owner.setId(item.getObjectId("_id").toString());
         return owner;
     }
 
-    private Document convertOwnerToDocument(Owner owner){
+    private Document convertOwnerToDocument(Owner owner) throws Exception {
+        byte[] salt = Hash.generateSalt();
+        String saltedHash = Hash.PBKDF2Hash(owner.getPassword(), salt);
+
         Document doc = new Document("userName", owner.getUserName())
                 .append("firstName", owner.getFirstName())
                 .append("lastName", owner.getLastName())
                 .append("prefGender", owner.getPrefGender())
                 .append("prefJob", owner.getPrefJob())
                 .append("prefNum", owner.getPrefNum())
-                .append("prefCook", owner.getPrefCook());
+                .append("prefCook", owner.getPrefCook())
+                .append("email", owner.getEmail())
+                .append("password", saltedHash)
+                .append("salt", salt);
         return doc;
     }
 
-    private Owner convertJsonToOwner(JSONObject json){
+    private Owner convertJsonToOwner(JSONObject json) {
         Owner owner = new Owner(
                 json.getString("userName"),
                 json.getString("firstName"),
@@ -173,7 +185,10 @@ public class OwnersService {
                 json.getString("prefGender"),
                 json.getString("prefJob"),
                 json.getInt("prefNum"),
-                json.getString("prefCook"));
+                json.getString("prefCook"),
+                json.getString("email"),
+                json.getString("password"),
+                null);
         return owner;
     }
 
