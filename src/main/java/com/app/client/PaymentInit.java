@@ -12,15 +12,12 @@ import java.net.URL;
 public class PaymentInit {
     private static PaymentService paymentService = PaymentService.getInstance();
 
-    public static String[] init() {
+    public static void init(String[] argv) {
         doDeleteAll();
-        String[] ids = new String[4];
-        ids[0] = doPost("ABCD12345","500", "ABCD12345");
-        ids[1] = doPost("EFGH67890", "1000", "EFGH67890");
-        ids[2] = doPost("ABCD67890", "233", "ABCD67890");
-        ids[3] = ids[2];
+        doPost("", "500", argv[0]);
+        doPost("", "1000", argv[1]);
+        doPost("", "233", argv[2]);
         doGetAll();
-        return ids;
     }
 
     public static String doPost(String transactionId, String amount, String rentalId) {
