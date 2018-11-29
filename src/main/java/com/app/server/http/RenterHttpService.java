@@ -3,14 +3,16 @@ package com.app.server.http;
 import com.app.server.http.exceptions.APPNotFoundException;
 import com.app.server.http.utils.APPResponse;
 import com.app.server.http.utils.PATCH;
+import com.app.server.models.Appointment;
 import com.app.server.models.Photo;
 import com.app.server.models.Renter;
-import com.app.server.services.*;
+import com.app.server.services.AppointmentService;
+import com.app.server.services.PhotoService;
+import com.app.server.services.RenterService;
+import org.bson.types.ObjectId;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -89,14 +91,7 @@ public class RenterHttpService {
     //Subresource as subclass
     @Path("renters/{renterId}/photos")
     public static class PhotoHttpService {
-        private PhotoService service;
-
-
-        public PhotoHttpService(@PathParam("renterId") String renterId, @Context HttpHeaders httpHeaders) {
-            this.service = PhotoService.getInstance();
-
-//            SessionService.validateToken(renterId, httpHeaders);
-        }
+        private PhotoService service = PhotoService.getInstance();
 
         @OPTIONS
         @PermitAll
@@ -165,13 +160,7 @@ public class RenterHttpService {
 
     @Path("renters/{renterId}/appointments")
     public static class AppointmentHttpService {
-        private AppointmentService service;
-
-        public AppointmentHttpService(@PathParam("renterId") String renterId, @Context HttpHeaders httpHeaders) {
-            this.service = AppointmentService.getInstance();
-
-            SessionService.validateToken(renterId, httpHeaders);
-        }
+        private AppointmentService service = AppointmentService.getInstance();
 
         @OPTIONS
         @PermitAll
@@ -253,63 +242,5 @@ public class RenterHttpService {
         }
 
     }
-
-    @Path("renters/{renterId}/rentals")
-    public static class RentalHttpService {
-        private RentalService service;
-
-        public RentalHttpService(@PathParam("renterId") String renterId, @Context HttpHeaders httpHeaders) {
-            this.service = RentalService.getInstance();
-
-            SessionService.validateToken(renterId, httpHeaders);
-        }
-
-        @OPTIONS
-        @PermitAll
-        public Response optionsById() {
-            return Response.ok().build();
-        }
-
-        @GET
-        @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse getAllRentalsOfRenter(@PathParam("renterId") String renterId) {
-
-            return new APPResponse(service.getAllRentalsOfRenter(renterId));
-        }
-
-        @POST
-        @Consumes({MediaType.APPLICATION_JSON})
-        @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse create(Object request) {
-            return new APPResponse(service.create(request));
-        }
-
-        @PATCH
-        @Path("{id}")
-        @Consumes({MediaType.APPLICATION_JSON})
-        @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse update(@PathParam("id") String id, Object request) {
-
-            return new APPResponse(service.update(id, request));
-
-        }
-
-        @DELETE
-        @Path("{id}")
-        @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse delete(@PathParam("id") String id) {
-
-            return new APPResponse(service.delete(id));
-        }
-
-        @DELETE
-        @Produces({MediaType.APPLICATION_JSON})
-        public APPResponse delete() {
-
-            return new APPResponse(service.deleteAll());
-        }
-
-    }
-
 }
 

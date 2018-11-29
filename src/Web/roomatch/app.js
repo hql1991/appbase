@@ -12,7 +12,7 @@ $(function() {
         jQuery.ajax ({
             url:  "/api/sessions",
             type: "POST",
-            data: JSON.stringify({email:$("#inputEmail").val(), password: $("#inputPassword").val()}),
+            data: JSON.stringify({emailAddress:$("#inputEmail").val(), password: $("#inputPassword").val()}),
             dataType: "json",
             contentType: "application/json; charset=utf-8"
         }).done(function(data){

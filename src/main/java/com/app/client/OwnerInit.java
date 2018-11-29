@@ -15,15 +15,15 @@ public class OwnerInit {
     public static String[] init() {
         doDeleteAll();
         String[] ids = new String[4];
-        ids[0] = doPost("Jim123", "Jim", "Madison", "Male", "Student", 1, "No cook", "jim123@hotmail.com", "1234567");
-        ids[1] = doPost("Pineapple", "Lisa", "Cooper", "Female", "Employed", 2, "Cook", "cooper@gmail.com", "0246810");
-        ids[2] = doPost("TJTJ", "Tom", "Green", "Male", "Employed", 1, "Cook", "green781@msn.com", "1357911");
+        ids[0] = doPost("Jim123", "Jim", "Madison", "Male", "Student", 1, "No cook");
+        ids[1] = doPost("Pineapple", "Lisa", "Cooper", "Female", "Employed", 2, "Cook");
+        ids[2] = doPost("TJTJ", "Tom", "Green", "Male", "Employed", 1, "Cook");
         ids[3] = ids[2];
         doGetAll();
         return ids;
     }
 
-    public static String doPost(String userName, String firstName, String lastName, String prefGender, String prefJob, int prefNum, String prefCook, String email, String password) {
+    public static String doPost(String userName, String firstName, String lastName, String prefGender, String prefJob, int prefNum, String prefCook) {
 //        try {
 //            URL url = new URL("http://localhost:8080/api/owners");
 //            HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -74,8 +74,6 @@ public class OwnerInit {
         owner.put("prefJob", prefJob);
         owner.put("prefNum", prefNum);
         owner.put("prefCook", prefCook);
-        owner.put("email", email);
-        owner.put("password", password);
 
         return ownersService.create(owner.toMap()).getId();
 
